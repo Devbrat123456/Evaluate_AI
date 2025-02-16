@@ -1,0 +1,44 @@
+<%- include('../includes/header') %>
+
+    <%- include('../includes/sidebar') %>
+        <%- include('../includes/navbar') %>
+
+            <div class="container">
+                <%- include('../includes/message') %>
+                    <div class="page-inner">
+                        <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                            <div>
+                                <h3 class="fw-bold mb-3"><%-page%></h3>
+                                <h6 class="op-7 mb-2"><%-description%></h6>
+                            </div>
+                            <div class="ms-md-auto py-2 py-md-0">
+
+                                <a href="/admin/category" class="btn btn-primary btn-round"> <%-page%></a>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="card card-stats card-round">
+                                <div class="card-body">
+                                    <form action="/admin/category/<%- data.id%>" method="POST">
+                                        <input type="hidden" name="_csrf" value="<%- csrfToken %>">
+
+                                        <div class="row container">
+
+                                            <div class="col-md-6">
+                                                <label for="category" class="form-label"><%- page%></label>
+                                                <input type="text" class="form-control" id="category" name="category"
+                                                    placeholder="Enter <%- page%>" value="<%- data.category %>">
+                                            </div>
+                                            <div class="col-md-3"></div>
+                                            <div class="col-md-2 my-4">
+                                                <button type="submit" class="btn btn-primary ">Submit</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <%- include('../includes/footer') %>

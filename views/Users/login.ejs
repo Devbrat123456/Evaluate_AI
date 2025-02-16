@@ -1,0 +1,205 @@
+<%- include('../includes/header') %>
+    <style>
+        #form-container {
+            margin-top: 100px !important;
+            ;
+
+        }
+    </style>
+    <main>
+        <div class="form-v7">
+
+            <div class="page-content">
+                <div class="form-v7-content ">
+                    <form class="form-detail" action="/users" method="post" id="myform" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <!-- <div class="row">
+                            <div class="col-md-3 form-row ">
+                                <label for="username">USERNAME</label>
+                                <input type="text" name="username" id="username" class="input-text">
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="your_email">E-MAIL</label>
+                                <input type="text" name="your_email" id="your_email" class="input-text" required
+                                    pattern="[^@]+@[^@]+.[a-zA-Z]{2,6}">
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="password">PASSWORD</label>
+                                <input type="password" name="password" id="password" class="input-text" required>
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="comfirm_password">CONFIRM PASSWORD</label>
+                                <input type="password" name="comfirm_password" id="comfirm_password" class="input-text"
+                                    required>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-md-3 form-row ">
+                                <label for="fullName" class="form-label">Full Name</label>
+                                <input type="text" class="input-text" id="fullName" placeholder="Enter your full name"
+                                    name="NAME" required>
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="input-text" id="email" name="EMAIL"
+                                    placeholder="Enter your email" required>
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="password">PASSWORD</label>
+                                <input type="password" name="PASSWORD" id="password" class="input-text" required>
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="confirm_password">CONFIRM PASSWORD</label>
+                                <input type="password" name="confirm_password" id="confirm_password" class="input-text"
+                                    required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-3 form-row">
+                                <label for="jobTitle" class="form-label">Current Job Title</label>
+                                <input type="text" class="input-text" id="jobTitle" name="CURRENT_JOB"
+                                    placeholder="Enter your current job title">
+                            </div>
+                            <div class="col-md-3 form-row">
+                                <label for="experience" class="form-label">Total Years of Experience</label>
+                                <input type="text" class="input-text" id="experience" min="0" name="EXPERIENCE"
+                                    placeholder="Enter years of experience">
+                            </div>
+                            <div class="col-md-3 form-row">
+                                <label for="desiredRole" class="form-label">Desired Job Role</label>
+                                <select class="form-select" id="desiredRole">
+                                    <option selected>Select your desired role</option>
+                                    <option>Backend Developer</option>
+                                    <option>Frontend Developer</option>
+                                    <option>Data Analyst</option>
+                                    <option>DevOps Engineer</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="phone" class="form-label">Contact Number</label>
+                                <input type="tel" class="input-text" id="phone" name="PHONE"
+                                    placeholder="Enter your phone number" required>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 form-row form-row ">
+                                <label for="github" class="form-label">GitHub/Portfolio Link (Optional)</label>
+                                <input type="url" class="input-text" id="github" name="GITHUB"
+                                    placeholder="Enter your GitHub/portfolio link">
+                            </div>
+                            <div class="col-md-3 form-row ">
+                                <label for="linkedin" class="form-label">LinkedIn Profile (Optional)</label>
+                                <input type="url" class="input-text" id="linkedin" name="LINKEDIN"
+                                    placeholder="Enter your LinkedIn profile link">
+                            </div>
+
+                            <div class="col-md-3 form-row">
+                                <label for="resume" class="form-label">Upload Resume</label>
+                                <input type="file" class="input-text" id="resume"
+                                    accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" name="RESUME">
+                            </div>
+                        </div>
+                        <hr style="border: 1px solid rgb(136, 134, 134); width: 100%;">
+                        <div class="row form-row">
+                            <label for="resume" class="form-label">Education</label>
+                            <table class="table mt-4">
+                                <thead>
+                                    <th>
+                                        Primary Skillset
+                                    </th>
+                                    <th>
+                                        Experience in this Skill
+                                    </th>
+                                    <th>
+                                        Add Row
+                                    </th>
+                                </thead>
+                                <tbody id="register_body">
+                                    <tr class="mt-4">
+                                        <div class="col-md-3 form-row">
+                                            <td>
+                                                <span class=""></span>
+                                                <select class="form-select" id="desiredRole" multiple="true"
+                                                    name="skills_id[]">
+                                                    <option value="">Select Skill</option>
+                                                    <% allSkills.forEach((value)=>{%>
+                                                        <option value="<%- value.id %>"><%- value.category %></option>
+                                                        <% }) %>
+
+                                                </select>
+                                            </td>
+                                        </div>
+                                        <div class="col-md-3 form-row">
+                                            <td>
+                                                <input type="tel" class="input-text" id="" name="skill_experience[]"
+                                                    placeholder="Enter your Experience in this Skill">
+                                            </td>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <td>
+                                                <i class="fas fa-plus" row_id="1" onclick="addRowRegisterClass()"></i>
+                                                </a>
+                                            </td>
+                                        </div>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3"></div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10"></div>
+                            <div class="form-row-last">
+                                <input type="submit" name="" class="register" value="Register">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    <script>
+        let row_no = 1;
+        const addRowRegisterClass = () => {
+            ++row_no;
+            let text = `<tr class="mt-4">
+    <div class="col-md-3 form-row">
+        <td>
+            <span class=""></span>
+            <select class="form-select" id="desiredRole${row_no}" multiple="true">
+                <option value="">Select Skill</option>
+                <% allSkills.forEach((value)=>{%>
+                    <option value="<%- value.id %>"><%- value.category %></option>
+                    <% }) %>
+
+            </select>
+        </td>
+    </div>
+    <div class="col-md-3 form-row">
+        <td>
+            <input type="tel" class="input-text" id="" name="skill_experience[]"
+                placeholder="Enter your Experience in this Skill" required>
+        </td>
+    </div>
+    <div class="col-md-3">
+        <td>
+            <i class="fas fa-plus" row_id="${row_no}" onclick="addRowRegisterClass()"></i>
+            </a>
+        </td>
+    </div>
+</tr>`;
+            $('#register_body').append(text);
+            $('.form-select').trigger('chosen:updated')
+            $('.form-select').select2();
+        }
+    </script>
+
+    <%- include('../includes/footer') %>

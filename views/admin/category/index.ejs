@@ -1,0 +1,72 @@
+<%- include('../includes/header') %>
+
+    <%- include('../includes/sidebar') %>
+        <%- include('../includes/navbar') %>
+            <div class="container">
+                <div class="page-inner">
+                    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                        <div>
+                            <h3 class="fw-bold mb-3"><%-page%></h3>
+                            <h6 class="op-7 mb-2"><%-description%></h6>
+                        </div>
+                        <div class="ms-md-auto py-2 py-md-0">
+
+                            <a href="/admin/category/create" class="btn btn-primary btn-round">Add <%-page%></a>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center container">
+
+                                    <table class="table table-responsive align-items-center mb-0" id="dataTable">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="text-end" scope="col">Sno</th>
+                                                <th class="text-end" scope="col"><%- page %></th>
+                                                <th class="text-end" scope="col">Edit</th>
+                                                <th class="text-end" scope="col">Delete</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-end">
+
+                                            <% allData.forEach((element,key)=> { %>
+                                                <tr>
+                                                    <td><%- key+1 %> </td>
+                                                    <td><%- element.category %> </td>
+                                                    <td>
+                                                        <a href="/admin/category/<%- (element.id) %>/edit"
+                                                            class="btn btn-sm btn-info">Edit</a>
+
+                                                    </td>
+                                                    <td>
+                                                        <button type="button"
+                                                            class="btn btn-danger btn-sm delete-button"
+                                                            id=" <%- element.id %>" table="category">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2"
+                                                                width="16" height="16" viewBox="0 0 24 24"
+                                                                stroke-width="2" stroke="currentColor" fill="none"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                                <path d="M3 6h18" />
+                                                                <path d="M4 6v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2V6" />
+                                                                <path d="M10 11v6" />
+                                                                <path d="M14 11v6" />
+                                                            </svg>
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%- include('../includes/footer') %>

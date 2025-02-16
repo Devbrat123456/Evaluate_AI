@@ -1,0 +1,135 @@
+<%- include('../includes/header') %>
+    <style>
+        #form-container {
+            margin-top: 100px !important;
+            ;
+
+        }
+    </style>
+    <main>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="form-v7">
+                    <div class="page-content">
+                        <div class="form-v7-content ">
+                            <div class="row">
+
+                                <div class="col-md-4">
+                                    <div class="form-detail">
+                                        <div class="static-list"><img
+                                                src="//static.naukimg.com/s/7/104/assets/images/white-boy.a0d2814a.png">
+                                            <h2 class="typ-18Bold">On registering, you can</h2>
+                                            <ul>
+                                                <li><i class="resman-icon resman-icon-1tick"></i>
+                                                    <p class="typ-14Medium">Build your profile and let recruiters find
+                                                        you</p>
+                                                </li>
+                                                <li><i class="resman-icon resman-icon-1tick"></i>
+                                                    <p class="typ-14Medium">Get job postings delivered right to your
+                                                        email</p>
+                                                </li>
+                                                <li><i class="resman-icon resman-icon-1tick"></i>
+                                                    <p class="typ-14Medium">Find a job and grow your career</p>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+
+                                    <form class="form-detail" action="/users" method="post" id="registerForm">
+                                        <div class="text-center">
+                                            <h1>Create your profile</h1>
+                                        </div>
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                        <div class="row">
+                                            <div class="form-row ">
+                                                <label for="fullName" class="form-label">Full Name</label>
+                                                <input type="text" class="input-text" id="fullName"
+                                                    placeholder="Enter your full name" name="NAME" required>
+                                            </div>
+                                            <div class=" form-row ">
+                                                <label for="email" class="form-label">Email Address</label>
+                                                <input type="email" class="input-text" id="email" name="EMAIL"
+                                                    placeholder="Enter your email" required>
+                                            </div>
+                                            <div class=" form-row ">
+                                                <label for="password">PASSWORD</label>
+                                                <input type="password" name="PASSWORD" placeholder="Enter your password"
+                                                    id="password" class="input-text" required>
+                                            </div>
+                                            <div class=" form-row ">
+                                                <label for="confirm_password">CONFIRM PASSWORD</label>
+                                                <input type="password" name="confirm_password"
+                                                    placeholder="Enter your confirm password" id="confirm_password"
+                                                    class="input-text" required>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="form-row">
+                                                <div class="row my-4">
+                                                    <div class="col-md-6">
+                                                        <label for="phone" class="form-label">Contact Number</label>
+                                                        <span class="d-flex ">
+                                                            +91
+                                                            <input type="tel" class="input-text" id="phone" name="PHONE"
+                                                                placeholder="Enter your phone number" required>
+                                                        </span>
+
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="resume" class="form-label">Upload Resume</label>
+                                                        <input type="file" class="input-text" id="resume"
+                                                            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" name="RESUME">
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+
+                                        </div>
+                                        <div class="row ">
+                                            <div class="form-row">
+                                                <label for="work_status" class="form-label">Work Status</label>
+                                                <!-- <div class="col-md-2 my-4"></div> -->
+                                                <div class="col-md-12">
+                                                    <div class="row my-4">
+                                                        <div class="col-md-4">
+                                                            <span class="d-flex">
+                                                                Experienced
+                                                                <input class="radio" type="radio" id="work_status"
+                                                                    name="work_status" value="Experienced"
+                                                                    placeholder="Enter your phone number">
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <span class="d-flex ">
+                                                                Fresher
+                                                                <input class="radio" type="radio" id="work_status"
+                                                                    name="work_status" value="Fresher"
+                                                                    placeholder="Enter your phone number">
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-row-last">
+                                                                <input type="submit" name="" form_id="registerForm"
+                                                                    class="register FormSubmit" value="Register">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../includes/footer') %>

@@ -1,0 +1,571 @@
+<div class="container">
+    <div class="modal fade" id="addEmployeMent" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form role="form" action="/addUserEmployement" id="EmployementForm" method="post">
+                        <label class="form-label required-label">Is this your current employment?</label>
+                        <div class="row">
+                            <div class="col s4">
+                                <input type="radio" name="isCurrent" required class="with-gap" id="yes" value="1"><label
+                                    for="">Yes</label>
+                            </div>
+                            <div class="col s4">
+                                <input type="radio" name="isCurrent" required class="with-gap" id="no" value="0"><label
+                                    for="">No</label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="user_id" required class="with-gap" id="employement_user_id">
+                        <label class="form-label required-label">Employment type</label>
+                        <div class="row">
+                            <div class="col s4">
+                                <input type="radio" name="employment_type" class="with-gap" id="full_time"
+                                    value="Full Time" required><label for="">Full Time</label>
+                            </div>
+                            <div class="col s4">
+                                <input type="radio" name="employment_type" class="with-gap" id="Internship"
+                                    value="Internship" required><label for="">Internship</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-row">
+                                <label class="form-label" for="total_experience">
+                                    Total Experience(Months)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="number" class="form-control" id="total_experience" name="total_experience"
+                                placeholder="Enter your Experience in months" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="current_company_name" class="form-label">
+                                    Current company name
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" id="current_company_name" name="company_name"
+                                placeholder="Enter your company Name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="current_job_title" class="form-label">
+                                    Current Job title
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" id="current_job_title" name="job_title"
+                                placeholder="Enter your Current Job " required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="joining_date" class="form-label">
+                                    Joining Date
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="date" class="form-control" id="joining_date" name="joining_date"
+                                placeholder="Enter your Joining Date in Current Company" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="notice_period" class="form-label">
+                                    Notice Period (Days)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" required id="notice_period" name="notice_period"
+                                placeholder="Enter your Notice Period in Days ">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="Job_Profile" class="form-label">
+                                    Job Profile
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <textarea name="job_profile" required class="form-control textarea" id="Job_Profile"
+                                cols="30" rows="5"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="EmployementForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container">
+    <div class="modal fade" id="addEducation" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form action="/addUserEducation" id="educationForm" method="POST">
+                        <input type="hidden" id="education_user_id" name="user_id">
+                        <div class="row">
+                            <div class="col-md-12 form-row">
+                                <label class="bold" for="education">Education</label>
+                                <select class="form-select" id="education" multiple="true" name="education" required>
+                                    <option value="">Select Education</option>
+                                    <% EducationType.forEach((value)=>{%>
+                                        <option value="<%- value %>"><%- value %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <label class="bold " for="University">University/Institute</label>
+                                <input type="text" name="university" class="form-control" id="University"
+                                    placeholder="Enter your University" required>
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <label class="bold" for="Courses">Courses</label>
+                                <input type="text" name="course" class="form-control" placeholder="Select Education"
+                                    id="Courses" placeholder="Enter your Course" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="bold required-label" for="course">Course Type</label>
+
+                            </div>
+                        </div>
+                        <div class="row my-4">
+
+                            <div class="col-md-4">
+
+                                <input class="radio" type="radio" id="course_type_full" name="course_type"
+                                    placeholder="Enter your phone number" value="1" required><label class="bold smpx"
+                                    for="">
+                                    Full
+                                    time</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="radio" type="radio" id="course_type_distance" name="course_type"
+                                    placeholder="Enter your phone number" value="0" required><label class="bold smpx"
+                                    for="course_type_fresher">
+                                    Distance</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="bold " for="from_duration"> Course Duration </label>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-6 ">
+                                <input type="number" class="form-control" id="from_duration" name="from_duration"
+                                    placeholder="Enter Start Year" min="1900" max="2099" maxlength="4" minlength="4"
+                                    step="1" required>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="bold" for="">To </label>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" id="to_duration" name="to_duration"
+                                    placeholder="Enter End Year" min="1900" max="2099" maxlength="4" minlength="4"
+                                    step="1" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="educationForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="modal fade" id="addSkills" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form action="/addUserSkills" id="skillsForm" method="POST">
+                        <input type="hidden" id="skills_user_id" name="user_id">
+                        <table class="table mt-4">
+                            <thead>
+                                <th>
+                                    <Label class="" for="skill">
+                                        Skill
+                                    </Label>
+                                </th>
+                                <th>
+                                    <label for="skill_experience">
+
+                                        Experience
+                                    </label>
+                                </th>
+                            </thead>
+                            <tbody id="register_body">
+                                <tr class="mt-4">
+                                    <div class="col-md-2 form-row">
+                                        <td>
+                                            <select class="form-select" id="skill_id" multiple="true" name="skill_id"
+                                                required>
+                                                <option value="">Select Skill</option>
+                                                <% allSkills.forEach((value)=>{%>
+                                                    <option value="<%- value.id %>"><%- value.category %>
+                                                    </option>
+                                                    <% }) %>
+
+                                            </select>
+                                        </td>
+                                    </div>
+                                    <div class="col-md-3 form-row">
+                                        <td>
+                                            <input type="tel" class="form-control" id="skill_experience"
+                                                name="experience" required
+                                                placeholder="Enter your Experience in this Skill">
+                                        </td>
+                                    </div>
+                                    <!-- <div class="col-md-3">
+                                        <td>
+                                            <i class="fas fa-plus" row_id="1" onclick="addRowRegisterClass()"></i>
+                                            </a>
+                                        </td>
+                                    </div> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="skillsForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="modal fade" id="editSkills" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form action="/editUserSkills" id="editSkillsForm" method="POST">
+                        <input type="hidden" id="edit_skills_experience_id" name="experience_id">
+
+                        <table class="table mt-4">
+                            <thead>
+                                <th>
+                                    <Label class="" for="skill">
+                                        Skill
+                                    </Label>
+                                </th>
+                                <th>
+                                    <label for="skill_experience">
+
+                                        Experience
+                                    </label>
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr class="mt-4">
+                                    <div class="col-md-2 form-row">
+                                        <td>
+                                            <select class="form-control" id="edit_skill_id" multiple="true"
+                                                name="skill_id" required>
+                                                <option value="">Select Skill</option>
+                                                <% allSkills.forEach((value)=>{%>
+                                                    <option value="<%- value.id %>"><%- value.category %>
+                                                    </option>
+                                                    <% }) %>
+
+                                            </select>
+                                        </td>
+                                    </div>
+                                    <div class="col-md-3 form-row">
+                                        <td>
+                                            <input type="text" class="form-control" id="edit_skill_experience"
+                                                name="experience" required
+                                                placeholder="Enter your Experience in this Skill">
+                                        </td>
+                                    </div>
+                                    <!-- <div class="col-md-3">
+                                        <td>
+                                            <i class="fas fa-plus" row_id="1" onclick="addRowRegisterClass()"></i>
+                                            </a>
+                                        </td>
+                                    </div> -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="editSkillsForm"><span class="glyphicon glyphicon-off"></span>
+                                    Update</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="modal fade" id="editEmployeMent" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form role="form" action="/editUserEmployement" id="EditEmployementForm" method="post">
+                        <label class="form-label required-label">Is this your current employment?</label>
+                        <div class="row">
+                            <div class="col s4">
+                                <input type="radio" id="edit_is_current_yes" name="isCurrent" required class="with-gap"
+                                    value="1"><label for="">Yes</label>
+                            </div>
+                            <div class="col s4">
+                                <input type="radio" name="isCurrent" id="edit_is_current_no" required class="with-gap"
+                                    value="0"><label for="">No</label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="edit_employee_id" required class="with-gap" id="edit_employee_id">
+                        <label class="form-label required-label">Employment type</label>
+                        <div class="row">
+                            <div class="col s4">
+                                <input type="radio" name="employment_type" class="with-gap" id="edit_full_time"
+                                    value="Full Time" required><label for="">Full Time</label>
+                            </div>
+                            <div class="col s4">
+                                <input type="radio" name="employment_type" class="with-gap" id="edit_Internship"
+                                    value="Internship" required><label for="">Internship</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-row">
+                                <label class="form-label" for="total_experience">
+                                    Total Experience(Months)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="number" class="form-control" id="edit_total_experience" name="total_experience"
+                                placeholder="Enter your Experience in months" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="current_company_name" class="form-label">
+                                    Current company name
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" id="edit_current_company_name" name="company_name"
+                                placeholder="Enter your company Name" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="current_job_title" class="form-label">
+                                    Current Job title
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" id="edit_current_job_title" name="job_title"
+                                placeholder="Enter your Current Job " required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="joining_date" class="form-label">
+                                    Joining Date
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="date" class="form-control" id="edit_joining_date" name="joining_date"
+                                placeholder="Enter your Joining Date in Current Company" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="notice_period" class="form-label">
+                                    Notice Period (Days)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <input type="text" class="form-control" required id="edit_notice_period"
+                                name="notice_period" placeholder="Enter your Notice Period in Days ">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="Job_Profile" class="form-label">
+                                    Job Profile
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <textarea name="job_profile" required class="form-control textarea" id="edit_Job_Profile"
+                                cols="30" rows="5"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="EditEmployementForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="modal fade" id="editEducation" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form action="/editUserEducation" id="editEducationForm" method="POST">
+                        <input type="hidden" id="edit_education_id" name="education_id">
+                        <div class="row">
+                            <div class="col-md-12 form-row">
+                                <label class="bold" for="education">Education</label>
+                                <select class="form-select" id="edit_education" multiple="true" name="education"
+                                    required>
+                                    <option value="">Select Education</option>
+                                    <% EducationType.forEach((value)=>{%>
+                                        <option value="<%- value %>"><%- value %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <label class="bold " for="University">University/Institute</label>
+                                <input type="text" name="university" class="form-control" id="edit_University"
+                                    placeholder="Enter your University" required>
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-12">
+                                <label class="bold" for="Courses">Courses</label>
+                                <input type="text" name="course" class="form-control" placeholder="Select Education"
+                                    id="edit_courses" placeholder="Enter your Course" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="bold required-label" for="course">Course Type</label>
+
+                            </div>
+                        </div>
+                        <div class="row my-4">
+
+                            <div class="col-md-4">
+
+                                <input class="radio" type="radio" id="edit_course_type_full" name="course_type"
+                                    placeholder="Enter your phone number" value="1" required><label class="bold smpx"
+                                    for="">
+                                    Full
+                                    time</label>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="radio" type="radio" id="edit_course_type_distance" name="course_type"
+                                    placeholder="Enter your phone number" value="0" required><label class="bold smpx"
+                                    for="course_type_fresher">
+                                    Distance</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="bold " for="from_duration"> Course Duration </label>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-md-6 ">
+                                <input type="number" class="form-control" id="edit_from_duration" name="from_duration"
+                                    placeholder="Enter Start Year" min="1900" max="2099" maxlength="4" minlength="4"
+                                    step="1" required>
+                            </div>
+                            <div class="col-md-1">
+                                <label class="bold" for="">To </label>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control" id="edit_to_duration" name="to_duration"
+                                    placeholder="Enter End Year" min="1900" max="2099" maxlength="4" minlength="4"
+                                    step="1" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="editEducationForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

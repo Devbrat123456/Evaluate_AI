@@ -1,0 +1,354 @@
+<%- include('../includes/header') %>
+    <style>
+        #form-container {
+            margin-top: 100px !important;
+            ;
+
+        }
+    </style>
+    <%- include('modal') %>
+        <main>
+            <div class="form-v7">
+
+                <div class="page-content">
+                    <div class="form-v7-content ">
+                        <form class="form-detail" action="/users/<%- data.id %>" method="post" id="myform">
+                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                            <div class="row">
+                                <div class="col-md-3 form-row ">
+                                    <label for="fullName" class="form-label">Full Name</label>
+                                    <input type="text" class="input-text" id="fullName" value="<%- data.NAME %>"
+                                        placeholder="Enter your full name" name="NAME" required>
+                                </div>
+                                <div class="col-md-3 form-row ">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="input-text" id="email" value="<%- data.EMAIL %>"
+                                        name="EMAIL" placeholder="Enter your email" required>
+                                </div>
+                                <div class="col-md-3 form-row ">
+                                    <label for="phone" class="form-label">Contact Number</label>
+                                    <input type="tel" class="input-text" id="phone" name="PHONE"
+                                        placeholder="Enter your phone number" value="<%- data.PHONE %>" required>
+                                </div>
+                                <div class="col-md-3 form-row">
+                                    <label for="resume" class="form-label">Upload Resume</label>
+                                    <input type="file" class="input-text" id="resume"
+                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" name="RESUME">
+                                </div>
+
+
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 form-row form-row ">
+                                    <label for="github" class="form-label">GitHub/Portfolio Link (Optional)</label>
+                                    <input type="url" class="input-text" id="github" name="GITHUB"
+                                        placeholder="Enter your GitHub/portfolio link" value="<%- data.GITHUB %>">
+                                </div>
+                                <div class="col-md-3 form-row ">
+                                    <label for="linkedin" class="form-label">LinkedIn Profile (Optional)</label>
+                                    <input type="url" class="input-text" id="linkedin" name="LINKEDIN"
+                                        placeholder="Enter your LinkedIn profile link" value="<%- data.LINKEDIN %>">
+                                </div>
+                                <div class="col-md-3"></div>
+                                <div class="col-md-3 mt-10 form-row-last">
+                                    <input type="submit" name="" class="register" value="Update">
+                                </div>
+
+                            </div>
+                            <hr style="border: 1px solid rgb(136, 134, 134); width: 100%;">
+                            <div class="row form-row">
+                                <div class="col-md-10">
+
+                                    <label for="resume" class="form-label">Key Skills</label>
+                                </div>
+
+
+                                <div class="col-md-2">
+                                    <a class="link-button" href="#"
+                                        onclick="openModal('addSkills','<%-data.id%>','skills_user_id')"> <i
+                                            class="fas fa-plus" row_id="1"></i>
+                                        Skills</a>
+                                </div>
+
+                                <div class="container text-field">
+                                    <table class="table table-responsive">
+                                        <thead>
+                                            <th>Skill</th>
+                                            <th>Experience</th>
+                                            <th>Action</th>
+                                        </thead>
+
+                                        <tbody>
+
+
+
+
+
+
+                                            <% experienceRelatedData.forEach((val)=>{
+
+                                                %>
+                                                <tr>
+                                                    <td>
+
+
+                                                        <%- val.category %>
+
+                                                    </td>
+                                                    <td>
+                                                        <%- val.experience??0 %>
+                                                    </td>
+                                                    <td>
+                                                        <i class="fas fa-edit" onclick="fetchData('<%- val.id %>')"></i>
+                                                    </td>
+
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <hr style="border: 1px solid rgb(136, 134, 134); width: 100%;">
+                            <div class="row form-row">
+                                <div class="col-md-10">
+                                    <label for="resume" class="form-label"> Employment</label>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <a class="link-button" href="#"
+                                        onclick="openModal('addEmployeMent','<%-data.id%>','employement_user_id')"> <i
+                                            class="fas fa-plus" row_id="1"></i>
+                                        Employment</a>
+                                </div>
+
+
+                                <% employementDetails.forEach((val)=>{
+
+                                    %>
+                                    <div class="container text-field">
+                                        <p>
+                                            <span class="bold">
+
+                                                <%- val.job_title %>
+                                            </span>
+
+                                            <span> <%- val.company_name %></span>
+
+                                            <span><%- val.job_profile %></span>
+                                            <span>
+                                                <i class="fas fa-edit"
+                                                    onclick="fetchDataEmployement('<%-val.id%>')"></i>
+                                            </span>
+
+                                    </div>
+                                    <% }) %>
+
+                            </div>
+
+
+                            <div class="row form-row">
+                                <div class="col-md-10">
+                                    <label for="resume" class="form-label"> Education</label>
+                                </div>
+                                <div class="col-md-2">
+                                    <a class="link-button" href="#"
+                                        onclick="openModal('addEducation','<%-data.id%>','education_user_id')"> <i
+                                            class="fas fa-plus" row_id="1"></i>
+                                        Education</a>
+                                </div>
+                                <% educationDetails.forEach((val)=>{
+
+                                    %>
+                                    <div class="container text-field">
+                                        <p>
+                                            <span class="bold">
+
+                                                <%- val.course %>
+                                            </span>
+
+                                            <span> <%- val.university %></span>
+
+                                            <span><%- val.course_duration %></span>
+                                            <span><%- val.course_type==1?"Full Time":(val.course_type==0?"Distance":'')
+                                                    %></span>
+                                            <span>
+                                                <i class="fas fa-edit" onclick="fetchDataEducation('<%-val.id%>')"></i>
+                                            </span>
+
+                                    </div>
+                                    <% }) %>
+
+
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+        <script>
+            let row_no = 1;
+            const addRowRegisterClass = () => {
+                ++row_no;
+                let text = `<tr class="mt-4">
+    <div class="col-md-3 form-row">
+        <td>
+            <span class=""></span>
+            <select class="form-select" id="desiredRole${row_no}" multiple="true">
+                <option value="">Select Skill</option>
+                <% allSkills.forEach((value)=>{%>
+                    <option value="<%- value.id %>"><%- value.category %></option>
+                    <% }) %>
+
+            </select>
+        </td>
+    </div>
+    <div class="col-md-3 form-row">
+        <td>
+            <input type="tel" class="input-text" id="" name="skill_experience[]"
+                placeholder="Enter your Experience in this Skill" required>
+        </td>
+    </div>
+    <div class="col-md-3">
+        <td>
+            <i class="fas fa-plus" row_id="${row_no}" onclick="addRowRegisterClass()"></i>
+            </a>
+        </td>
+    </div>
+</tr>`;
+                $('#register_body').append(text);
+                $('.form-select').trigger('chosen:updated')
+                $('.form-select').select2();
+            }
+
+
+            const fetchData = (id) => {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/fetchUserSkill',
+                    type: 'POST',
+                    data: { id },
+                    dataType: 'JSON',
+                    success: function (response) {
+
+                        if (response.data) {
+
+                            $('#edit_skills_experience_id').val(id);
+                            $('#edit_skill_experience').val(response.data.experience);
+                            $('#editSkills').modal('show');
+                            $('#edit_skill_id').val(response.data.skill_id).niceSelect("update").trigger("change");
+
+                        }
+                    },
+                    error: function (err) {
+                        messagePop(err.responseJSON.message, 'error');
+                    }
+
+                })
+            }
+
+            const fetchDataEmployement = (id) => {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/fetchUserEmployement',
+                    type: 'POST',
+                    data: { id },
+                    dataType: 'JSON',
+                    success: function (response) {
+
+                        if (response.data) {
+                            if (response.data.is_current_employement) {
+                                $('#edit_is_current_yes').prop('checked', true);
+                            } else {
+                                $('#edit_is_current_no').prop('checked', true);
+                            }
+
+                            if (response.data.employment_type == 'Full Time') {
+                                $('#edit_full_time').prop('checked', true);
+                            } else {
+                                $('#edit_Internship').prop('checked', true);
+                            }
+                            $('#edit_total_experience').val(response.data.total_experience);
+                            $('#edit_current_company_name').val(response.data.company_name);
+                            $('#edit_current_job_title').val(response.data.job_title);
+                            let Joining_date = new Date(response.data.Joining_date);
+                            // Ensure month and day are zero-padded to two digits
+                            let year = Joining_date.getFullYear();
+                            let month = String(Joining_date.getMonth() + 1).padStart(2, '0'); // Add 1 to the month and pad with zero if necessary
+                            let day = String(Joining_date.getDate()).padStart(2, '0');
+                            Joining_date = `${year}-${month}-${day}`;
+
+                            // console.log(Joining_date.getDate(), Joining_date.getMonth(), Joining_date.getFullYear());
+                            console.log(Joining_date);
+                            $('#edit_employee_id').val(response.data.id);
+
+                            $('#edit_joining_date').val(Joining_date);
+                            $('#edit_notice_period').val(response.data.notice_period);
+
+                            $('#edit_Job_Profile').val(response.data.job_profile);
+                            $('#editEmployeMent').modal('show');
+                            // $('#edit_skill_id').val(response.data.skill_id).niceSelect("update").trigger("change");
+
+                        }
+                    },
+                    error: function (err) {
+                        messagePop(err.responseJSON.message, 'error');
+                    }
+
+                })
+            }
+
+            const fetchDataEducation = (id) => {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: '/fetchUserEducation',
+                    type: 'POST',
+                    data: { id },
+                    dataType: 'JSON',
+                    success: function (response) {
+
+                        if (response.data) {
+
+                            $('#edit_education_id').val(response.data.id);
+                            $('#edit_University').val(response.data.university);
+                            $('#edit_courses').val(response.data.course);
+                            $('#edit_courses').val();
+                            if (response.data.course_type) {
+                                $('#edit_course_type_full').prop('checked', true);
+                            } else {
+                                $('#edit_course_type_distance').prop('checked', true);
+                            }
+                            let duration = response.data.course_duration.split('-');
+                            $('#edit_from_duration').val(duration[0]);
+                            $('#edit_to_duration').val(duration[1]);
+
+                            $('#editEducation').modal('show');
+                            $('#edit_education').val(response.data.education).niceSelect("update").trigger("change");
+
+                        }
+                    },
+                    error: function (err) {
+                        messagePop(err.responseJSON.message, 'error');
+                    }
+
+                })
+            }
+        </script>
+
+        <%- include('../includes/footer') %>

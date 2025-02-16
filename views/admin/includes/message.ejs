@@ -1,0 +1,18 @@
+<% if(code) { %>
+
+    <% if (code=='success' ) { %>
+        <div class="alert alert-success" role="alert">
+            <p class="text-success">
+                <%- message %> <!-- Display the success message -->
+            </p>
+        </div>
+        <% } %>
+
+            <% if (code=='error' ) { %>
+                <div class="alert alert-danger" role="alert"></div>
+                <p class="text-danger">
+                    <%- message %>
+                </p>
+                </div>
+                <% } %>
+                    <% } %>
