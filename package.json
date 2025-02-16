@@ -4,7 +4,7 @@
   "description": "Thank you for using our template!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\"",
     "dev": "nodemon index.js ejs,js,css "
   },
   "author": "",
