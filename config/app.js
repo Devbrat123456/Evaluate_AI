@@ -8,15 +8,15 @@ const dotenv = require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 
-const sdk = require("microsoft-cognitiveservices-speech-sdk");
+// const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const http = require('http');
 const fs = require('fs');
 const socketIO = require('socket.io');
 
 
 
-const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
-speechConfig.speechRecognitionLanguage = "en-US";
+// const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
+// speechConfig.speechRecognitionLanguage = "en-US";
 
 const port = process.env.PORT || 3000; // Required to attach WebSocket to HTTP server
 
@@ -105,87 +105,87 @@ try {
     app.use('/chatbox', chatBox); // General routes
     app.use('/', router);
 
-    io.on('connection', (socket) => {
-        let audioBuffer = [];
-        console.log('New client connected');
+    // io.on('connection', (socket) => {
+    //     let audioBuffer = [];
+    //     console.log('New client connected');
 
 
 
 
 
-        socket.on('message', (data) => {
-            // console.log(data);
+    //     socket.on('message', (data) => {
+    //         // console.log(data);
 
-            const audioStream = Buffer.from(data);
-            // console.log("Received Audio Buffer:", audioStream);
+    //         const audioStream = Buffer.from(data);
+    //         // console.log("Received Audio Buffer:", audioStream);
 
-            // audioBuffer.push(data);
-            // const audioStream = Buffer.concat(audioBuffer);
-            // let jsonString=audioStream.toString('utf8');
-            // const jsonData = JSON.parse(jsonString); 
-            // console.log(jsonData);
+    //         // audioBuffer.push(data);
+    //         // const audioStream = Buffer.concat(audioBuffer);
+    //         // let jsonString=audioStream.toString('utf8');
+    //         // const jsonData = JSON.parse(jsonString); 
+    //         // console.log(jsonData);
 
-            const audioFile = path.join(__dirname, "../public/assets/audio/ElevenLabsNew.wav");
-            const audioFiletemp = path.join(__dirname, "../public/assets/audio");
-            const newFile = path.join(__dirname, "../public/assets/audio/temp_audio.webm");
-            fs.writeFileSync(newFile, audioStream);
-            // // console.log(audioFile);
-            if (!fs.existsSync(newFile)) {
-                console.error("Error: temp_audio.webm file does not exist.");
-                return;
-            }
-            const stats = fs.statSync(newFile);
-            if (stats.size === 0) {
-                console.error("Error: temp_audio.webm file is empty.");
-                return;
-            }
+    //         const audioFile = path.join(__dirname, "../public/assets/audio/ElevenLabsNew.wav");
+    //         const audioFiletemp = path.join(__dirname, "../public/assets/audio");
+    //         const newFile = path.join(__dirname, "../public/assets/audio/temp_audio.webm");
+    //         fs.writeFileSync(newFile, audioStream);
+    //         // // console.log(audioFile);
+    //         if (!fs.existsSync(newFile)) {
+    //             console.error("Error: temp_audio.webm file does not exist.");
+    //             return;
+    //         }
+    //         const stats = fs.statSync(newFile);
+    //         if (stats.size === 0) {
+    //             console.error("Error: temp_audio.webm file is empty.");
+    //             return;
+    //         }
 
-            // console.log(1);
+    //         // console.log(1);
 
-            const wavBuffer = fs.readFileSync(audioFile);
+    //         const wavBuffer = fs.readFileSync(audioFile);
 
-            const pushStream = sdk.AudioInputStream.createPushStream();
-            pushStream.write(wavBuffer);
-            pushStream.close();
+    //         const pushStream = sdk.AudioInputStream.createPushStream();
+    //         pushStream.write(wavBuffer);
+    //         pushStream.close();
 
-            const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
-            const speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
-            speechRecognizer.recognizeOnceAsync(result => {
-                // console.log(sdk.ResultReason);
-                switch (result.reason) {
+    //         const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
+    //         const speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+    //         speechRecognizer.recognizeOnceAsync(result => {
+    //             // console.log(sdk.ResultReason);
+    //             switch (result.reason) {
 
-                    case sdk.ResultReason.RecognizedSpeech:
-                        // console.log(`RECOGNIZED: Text=${result.text}`);
-                        break;
-                    case sdk.ResultReason.NoMatch:
-                        console.log("NOMATCH: Speech could not be recognized.");
-                        break;
-                    case sdk.ResultReason.Canceled:
-                        const cancellation = sdk.CancellationDetails.fromResult(result);
-                        console.log(`CANCELED: Reason=${cancellation.reason}`);
+    //                 case sdk.ResultReason.RecognizedSpeech:
+    //                     // console.log(`RECOGNIZED: Text=${result.text}`);
+    //                     break;
+    //                 case sdk.ResultReason.NoMatch:
+    //                     console.log("NOMATCH: Speech could not be recognized.");
+    //                     break;
+    //                 case sdk.ResultReason.Canceled:
+    //                     const cancellation = sdk.CancellationDetails.fromResult(result);
+    //                     console.log(`CANCELED: Reason=${cancellation.reason}`);
 
-                        if (cancellation.reason == sdk.CancellationReason.Error) {
-                            console.log(`CANCELED: ErrorCode=${cancellation.ErrorCode}`);
-                            console.log(`CANCELED: ErrorDetails=${cancellation.errorDetails}`);
-                            console.log("CANCELED: Did you set the speech resource key and region values?");
-                        }
-                        break;
-                    default:
-                        console.log(result.reason, "default");
-                }
-                speechRecognizer.close();
-            });
+    //                     if (cancellation.reason == sdk.CancellationReason.Error) {
+    //                         console.log(`CANCELED: ErrorCode=${cancellation.ErrorCode}`);
+    //                         console.log(`CANCELED: ErrorDetails=${cancellation.errorDetails}`);
+    //                         console.log("CANCELED: Did you set the speech resource key and region values?");
+    //                     }
+    //                     break;
+    //                 default:
+    //                     console.log(result.reason, "default");
+    //             }
+    //             speechRecognizer.close();
+    //         });
 
 
-        });
-        // process.exit(1);
-        socket.on('disconnect', () => {
+    //     });
+    //     // process.exit(1);
+    //     socket.on('disconnect', () => {
 
-            console.log('Client disconnected');
+    //         console.log('Client disconnected');
 
-        });
+    //     });
 
-    });
+    // });
 
 
     // General routes
