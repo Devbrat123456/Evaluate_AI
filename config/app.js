@@ -19,7 +19,7 @@ const socketIO = require('socket.io');
 // speechConfig.speechRecognitionLanguage = "en-US";
 
 const port = process.env.PORT || 3000; // Required to attach WebSocket to HTTP server
-
+console.log("this is port ",port);
 
 let server = http.createServer(app);
 // const httpServer = createServer(app); // Create HTTP server for WebSockets
