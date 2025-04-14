@@ -1,7 +1,7 @@
 const module_path = `Users`;
 const CommonModel = require('../models/CommonModel');
 const tableName = "users";
-const CommonModelInstance = new CommonModel(tableName);
+const UserModelInstance = new CommonModel(tableName);
 const { getDatetime, getDate, encryptId, decryptId, EducationType, isAjax } = require('../../config/utils/helper');
 const page = "Skills";
 const description = "Skills";
@@ -26,7 +26,7 @@ const cookieOptions = {
 const usersController = {
 
     index: async (req, res) => {
-        const allData = await CommonModelInstance.findAll();
+        const allData = await UserModelInstance.findAll();
         console.log(req);
         res.render(`${module_path}/index`, {
             page, description, allData, encryptId
@@ -61,7 +61,7 @@ const usersController = {
             }
         }
 
-        let ifUserExist = await CommonModelInstance.findOne({ EMAIL });
+        let ifUserExist = await UserModelInstance.findOne({ EMAIL });
 
         if (ifUserExist.length > 0) {
             let msg = {
@@ -93,7 +93,7 @@ const usersController = {
 
 
         try {
-            const newUser = await CommonModelInstance.create(dataToSave);
+            const newUser = await UserModelInstance.create(dataToSave);
             let msg = {
                 'message': "Sign Up Success Fully Now you can Login!"
             }
@@ -122,11 +122,11 @@ const usersController = {
 
     edit: async (req, res) => {
         const id = req.params.id;
-        const data = await CommonModelInstance.findOne({ id });
+        const data = await UserModelInstance.findOne({ id });
         const employementDetails = await employementModel.findOne({ user_id: id })
         const educationDetails = await educationModel.findOne({ user_id: id });
         const experienceDetails = await experienceModel.findOne({ user_id: id });
-        const experienceRelatedData = await CommonModelInstance.buildDynamicQueryJoin(['users', 'skills', 'experience'], ['users.NAME', 'skills.category', 'experience.experience', 'experience.id'], [{ type: "inner", table: "experience", on: 'users.id=experience.user_id' }, { type: 'inner', table: 'skills', on: 'skills.id=experience.skill_id' }], [{ column: 'users.id', value: id }])
+        const experienceRelatedData = await UserModelInstance.buildDynamicQueryJoin(['users', 'skills', 'experience'], ['users.NAME', 'skills.category', 'experience.experience', 'experience.id'], [{ type: "inner", table: "experience", on: 'users.id=experience.user_id' }, { type: 'inner', table: 'skills', on: 'skills.id=experience.skill_id' }], [{ column: 'users.id', value: id }])
 
         let successMessages = req.flash('success');
         let errorMessages = req.flash('error');
@@ -145,7 +145,7 @@ const usersController = {
 
         try {
 
-            const updateStatus = await CommonModelInstance.update({ NAME, EMAIL, PHONE, RESUME: RESUME ?? null, GITHUB: GITHUB ?? null, LINKEDIN: LINKEDIN ?? null, CURRENT_JOB: CURRENT_JOB ?? null, EXPERIENCE: isNaN(EXPERIENCE) ? 0 : EXPERIENCE ?? 0, updated_at: getDatetime() }, `id=${id}`);
+            const updateStatus = await UserModelInstance.update({ NAME, EMAIL, PHONE, RESUME: RESUME ?? null, GITHUB: GITHUB ?? null, LINKEDIN: LINKEDIN ?? null, CURRENT_JOB: CURRENT_JOB ?? null, EXPERIENCE: isNaN(EXPERIENCE) ? 0 : EXPERIENCE ?? 0, updated_at: getDatetime() }, `id=${id}`);
 
             if (updateStatus.affectedRows > 0) {
                 req.flash('success', 'updated Successfully');
@@ -163,7 +163,7 @@ const usersController = {
         const id = req.params.id;
 
         try {
-            const deleteStatus = await CommonModelInstance.delete({ id });
+            const deleteStatus = await UserModelInstance.delete({ id });
 
             if (deleteStatus.affectedRows > 0) {
 
@@ -322,7 +322,7 @@ const usersController = {
         let { EMAIL, password } = req.body;
         try {
 
-            const data = await CommonModelInstance.findOne({ EMAIL });
+            const data = await UserModelInstance.findOne({ EMAIL });
 
             if (data) {
 
@@ -561,7 +561,38 @@ const usersController = {
             return res.status(500).json(msg);
         }
 
-    }
+    },
+
+    UploadProfile:async(req,res)=>{
+
+            if(!req.files){
+                return res.status(500).json({'message':"No file Found for Profile"})
+            }
+    },
+    UploadResume:async(req,res,err)=>{
+                if(!req.files){
+                return res.status(500).json({'message':"No file Found for Resume"});
+            }
+
+
+
+        try {
+              const {user_id}= req.body;
+                let filePath = req.files[0].filename;
+            const updateStatus = await UserModelInstance.update({ RESUME: filePath ?? null}, `id=${user_id}`);
+
+            if (updateStatus.affectedRows > 0) {
+                return res.status(200).json({"message":"Updated Successfully","filePath":filePath});
+            } else {
+                return res.status(500).json({"message":"Failed Updation"});
+            }
+        }
+        catch (error) {
+            return res.status(500).json({"message":'Failed  to add Please Try Again! ' + error.sqlMessage});
+        }
+
+
+    }       
 
 
 }

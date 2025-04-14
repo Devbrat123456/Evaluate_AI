@@ -6,6 +6,7 @@ const secretKey = process.env.CRYPT_KEY; // Must be 32 characters
 const iv = crypto.randomBytes(16);
 const path = require("path");
 const fs = require("fs").promises;
+const fs2 = require("fs");
 const { exec, spawn } = require('child_process');
 
 function encryptId(id) {
@@ -65,14 +66,39 @@ const getJsonFile = async () => {
 }
 
 
+function getPhonemes(text, callback) {
+    const command = `espeak-ng -x -q "${text}"`;
+
+    exec(command, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+            return;
+        }
+        
+        callback(stdout.trim());
+    });
+}
+
+
+const inputFilePath = "/home/admin1/Desktop/java/Nodejs/Evalutation/public/assets/audio/ElevenLabsNew.wav";
+const phonemeFilePath = "/home/admin1/Desktop/java/Nodejs/Evalutation/public/assets/audio/phonemes.txt";
+const jsonFilePath = "/home/admin1/Desktop/java/Nodejs/Evalutation/public/assets/audio/audioFile.json";
+
 
 const runRhubarbCommand = async () => {
 
  return new Promise((resolve, reject) => {
+    // console.log(text);
         const shellScript = path.join(__dirname, 'audioScript.sh');
         const process = spawn(shellScript, [], { shell: true });
-
-        process.stdout.on('data', (data) => console.log(`[stdout]: ${data.toString()}`));
+            console.log("running script");
+        process.stdout.on('data', (data) => {
+            console.log(`[stdout]: ${data.toString()}`);
+        });
         process.stderr.on('data', (data) => console.error(`[stderr]: ${data.toString()}`));
 
         process.on('close', (code) => {
@@ -86,10 +112,64 @@ const runRhubarbCommand = async () => {
         });
     });
 
-
 };
+
+
+
+
+function phonemeToViseme(phoneme) {
+
+    // Mapping phonemes to visemes (Modify as needed)
+   const phonemeToVisemeVar = {
+    "AA": "A", "AE": "A", "AH": "B", "AO": "B", "AW": "C",
+    "AY": "C", "B": "D", "CH": "E", "D": "F", "DH": "F",
+    "EH": "G", "ER": "G", "EY": "H", "F": "I", "G": "J",
+    "HH": "K", "IH": "L", "IY": "L", "JH": "M", "K": "N",
+    "L": "O", "M": "P", "N": "Q", "NG": "Q", "OW": "R",
+    "OY": "S", "P": "T", "R": "U", "S": "V", "SH": "W",
+    "T": "X", "TH": "X", "UH": "Y", "UW": "Y", "V": "Z",
+    "W": "Z", "Y": "A", "Z": "B", "ZH": "C"
+};
+
+    return phonemeToVisemeVar[phoneme] || "X"; // Default to "X" if not mapped
+}
+
+function processPhonemes(output, duration = 20) {
+   let phonemes = output.trim().match(/[^ ]+/g) || [];  // Better phoneme extraction
+
+    if (phonemes.length === 0) {
+        console.error("No phonemes found!");
+        return null;
+    }
+
+    let phonemeDurations = phonemes.map(p => p.length); // Weight based on phoneme length
+    let totalWeight = phonemeDurations.reduce((a, b) => a + b, 0);
+    
+    let elapsedTime = 0;
+    let mouthCues = phonemes.map((phoneme, index) => {
+        let phonemeDuration = (phonemeDurations[index] / totalWeight) * duration;
+        let start = elapsedTime.toFixed(2);
+        let end = (phonemeDuration).toFixed(2);
+        elapsedTime += phonemeDuration;
+
+        return {
+            start,
+            end,
+            value: phonemeToViseme(phoneme)
+        };
+    });
+
+    return {
+        metadata: {
+            soundFile: "/path/to/audio.wav",
+            duration
+        },
+        mouthCues
+    };
+}
+
 
 // Run the function
 
 
-module.exports = { getDatetime, getDate, encryptId, decryptId, EducationType, isAjax, getJsonFile, runRhubarbCommand }
+module.exports = { getDatetime, getDate, encryptId, decryptId, EducationType, isAjax, getJsonFile, runRhubarbCommand,getPhonemes }

@@ -107,7 +107,7 @@ class CommonModel {
         }
     }
 
-    async buildDynamicQueryJoin(tables, columns, joins, conditions = []) {
+    async buildDynamicQueryJoin(tables, columns, joins, conditions = [],groupBy=[],orderBy=[]) {
         let sql = "SELECT ";
         sql += columns.map(() => "??").join(", "); // Use placeholders for column names
 
@@ -128,6 +128,18 @@ class CommonModel {
             sql += ` WHERE ` + conditions.map(() => "?? = ?").join(" AND ");
             conditions.forEach(condition => {
                 params.push(condition.column, condition.value);
+            });
+        }
+        if (groupBy.length > 0) {
+            sql += ` GROUP BY ` + conditions.map(() => "?? = ?").join(",");
+            groupBy.forEach(condition => {
+                params.push(condition);
+            });
+        }
+         if (orderBy.length > 0) {
+            sql += ` ORDER BY ` + conditions.map(() => "?? = ?").join(",");
+            orderBy.forEach(condition => {
+                params.push(condition);
             });
         }
         try {

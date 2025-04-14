@@ -8,23 +8,29 @@ const dotenv = require('dotenv').config();
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 
-// const sdk = require("microsoft-cognitiveservices-speech-sdk");
+const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const http = require('http');
 const fs = require('fs');
-const socketIO = require('socket.io');
+// const socketIO = require('socket.io');
+const {initialize,getIo} = require('./socket.js');
 
 
-
-// const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
-// speechConfig.speechRecognitionLanguage = "en-US";
+const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
+speechConfig.speechRecognitionLanguage = "en-US";
 
 const port = process.env.PORT || 3000; // Required to attach WebSocket to HTTP server
-console.log("this is port ",port);
 
 let server = http.createServer(app);
 // const httpServer = createServer(app); // Create HTTP server for WebSockets
-const io = socketIO(server);
-
+// const io = socketIO(server);
+    initialize(server);
+const io = getIo();
+//  io.on('connect',(socket)=>{
+// socket.on('text_file',(textfile)=>{
+//     console.log("text file");
+//     // convertTextToAudio(textfile);
+// })
+//  })
 
 
 // Routes
@@ -194,4 +200,4 @@ try {
 }
 
 // Export the app and port
-module.exports = { app, port, io, server };
+module.exports = { app, port, server };

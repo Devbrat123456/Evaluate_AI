@@ -4,13 +4,14 @@
   "description": "Thank you for using our template!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js ejs,js,css "
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "assemblyai": "^4.9.0",
     "bcrypt": "^5.1.1",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
@@ -24,6 +25,7 @@
     "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "socket.io": "^4.8.1",

@@ -1,6 +1,8 @@
 <%- include('../includes/header')%>
+<%- include('modal')%>
 
   <div class="avatar-container row" >
+    <audio id="audioPlay" src="/assets/audio/ElevenLabsNew.wav"></audio>
       <div class="col-md-6" style="overflow:hidden">
           <div class="threeContainer" id="threeContainer" >
 
@@ -9,82 +11,28 @@
       <div class="col-md-6 whatsapp-container">
 
     <div class="whatsapp-chat-container">
-        <div class="chat-header">
-            <div class="header-left">
-                <div class="user-info">
-
-                    <div class="avatar"></div>
-
-                    <div class="user-details">
-
-                        <h2>John Doe</h2>
-
-                        <span class="online-status">online</span>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-
+       
     <div class="chat-messages">
-
-
-        <div class="message received">
-
-            <div class="message-content">
-
-                <p>Hey! How are you?</p>
-
-                <span class="timestamp">10:30 AM</span>
-
-            </div>
-
-        </div>
-
-
+       
         <!-- Sent Message -->
-
-        <div class="message sent">
-
-            <div class="message-content">
-
-                <p>I'm good, thanks! How about you?</p>
-                 <div class="words" contenteditable>
-                         <p id="p"></p>
-                 </div>
-
-                <span class="timestamp">10:31 AM</span>
-
-                 <audio id="audioCapture"></audio>
-
-                <div class="status-indicator">
-
-                    <i class="fas fa-check-double"></i>
-
-                </div>
-
-            </div>
-
-        </div>
-
     </div>
-
 
     <!-- Chat Input -->
 
     <div class="chat-input">
 
-        <button class="input-icon"><i class="fas fa-paperclip"></i></button>
-
-        <button class="input-icon"><i class="far fa-smile"></i></button>
-
-        <input type="text" placeholder="Type a message">
-         <button id="startBtn" onclick="takingInputFromUser()">Start Listening</button>
-    <button id="stopRecording" >Stop Listening</button>
-   
-        <button class="send-button"><i class="fas fa-microphone"></i></button>
+        <button class="btn btn-sm btn-success buttonload" id="generateQts"> <i class="fa fa-spinner fa-spin"></i>Loading</button>
+        <%# <input type="text" placeholder="Type a message"> %>
+        <div type="text" placeholder="Type a message"> </div>
+        <input type="hidden" id="question_id" >
+        <input type="hidden" id="user_answer" >
+        <input type="hidden" id="user_id" value="<%-user.id %>">
+        <input type="hidden" id="level_id" value="<%-level_id %>">
+        <input type="hidden" id="topic" value="<%-skill.category %>">
+        <input type="hidden" id="skill_id_of_user" value="<%-level_id %>">
+        <input type="hidden" id="user_name" value="<%-user.NAME %>">
+        <input type="hidden" id="user_email" value="<%-user.EMAIL %>">
+        <button class="send-button displayNone" id="startBtn" title="Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
 
     </div>
 
@@ -92,171 +40,62 @@
     </div>
 </div>
 
+
    
-    <script type="module"  src="/assets/js/gsap.min.js"></script>
- <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script>
-    <script type="module" defer src="/assets/utils/main.js"></script>
-  
-  <script src="/socket.io/socket.io.js"></script>.
+<script   src="/assets/js/gsap.min.js"></script>
+ // <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+    var socket = io();
+</script>
+<%# <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script> %>
+<script type="module"   src="/assets/utils/main.js"></script>
+<script   src="/assets/utils/speechConvert.js"></script>
+ <script   type="text/javascript">
+     
+ window.onload=()=>{
+        let name ="<%-user.NAME %>"
+        let email ="<%-user.EMAIL %>"
+        let user_id ="<%-user.id %>"
+        let speakingText=`Hey Welcome ${name}, How are You?`;
+        // let speakingText=`The system generated API ID 9152 after the bid approval, but in the "Pending Lot View," API ID 7907 is displayed. Kindly investigate and correct this and let us know the reason also for the discrepancy.`;
+        // setTimeout(,1000);
+        let level_id="<%-level_id %>";
+        let skill="<%-skill.category %>";
+        console.log(skill,level_id,email);
 
-  
+      //    if(skill&&level_id && email)
+        getQuestion(skill,level_id,email,user_id);
+        openModalForLogin();
 
+};
 
-     <script>
+ </script>
 
-        document.getElementById("startBtn").addEventListener("click", () => {
-         
-           takingInputFromUser();
-        });
+ <script>
+const modal = document.querySelector(".modal");
+const modalButton = document.querySelector(".modal-button");
+const closeButton = document.querySelector(".close-button");
+const scrollDown = document.querySelector(".scroll-down");
+let isOpened = false;
+const openModalForLogin = () => {
+  modal.classList.add("is-open");
+};
 
-       
-       const speechToText= async (pathforAudioFile)=>{
+const openModalForAlert = () => {
+  modal.classList.add("is-open");
+};
 
-          const response = await fetch(pathforAudioFile);
-        const audioBlob = await response.blob(); 
-        const audioFile = new File([audioBlob], "audio.wav", { type: "audio/wav" }); 
+const closeModal = () => {
+  modal.classList.remove("is-open");
+};
 
-        const formData = new FormData();
-        // formData.append("audio", audioFile);
-        formData.append("mukul", "good");
+// modalButton.addEventListener("click", openModalForLogin);
+// closeButton.addEventListener("click", closeModal);
 
-     try {
-        const response = await fetch("/ChatBox/speechToText", {
-            method: "POST",
-            body: {
-                'name':'mukul',
-            },
-            headers: {
-                "X-CSRF-Token": $('meta[name="csrf-token"]').attr('content')
-            },
-            credentials: "same-origin" 
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || "Upload failed");
-        }
-
-        const data = await response.json();
-        console.log("Success:", data);
-    } catch (error) {
-        messagePop(error.message, 'error');
-    }
- }
-
- // var socket = new io.Socket();
-   var socket = io();
-
-        // connection with server
-        // socket.on('connect', function () {
-        //     console.log('Connected to Server');
-        //      // takingInputFromUser();
-        // });
-        // console.log(socket);
-
-// socket.connect(window.location.origin); 
-  var mediaRecorder;
-     const takingInputFromUser = async()=>{
-  var audioChunks = [];
-
-         var constraints = { audio: true, video: false };
-        navigator.mediaDevices.getUserMedia(constraints).then(function (stream)
-        {
-
-              var audio = document.getElementById('audioCapture');
-              //   audio.srcObject = stream;
-              //   audio.play();
-              mediaRecorder = new MediaRecorder(stream);
-              mediaRecorder.start();
-
-                mediaRecorder.ondataavailable = function (event) {
-                    if (event.data.size > 0) {
-                        audioChunks.push(event.data);
-                    }
-              };
-
- // const reader = new FileReader();
-        mediaRecorder.onstop = function () {
-            // Create a Blob from chunks
-            var audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-            var audioUrl = URL.createObjectURL(audioBlob);
-
-            // var recordedAudio = document.createElement('audio');
-            // recordedAudio.controls = true;
-            // recordedAudio.src = audioUrl;
-            // document.getElementById('p').appendChild(recordedAudio);
-
-            // const blob = new Blob(audioChunks, { type: "audio/ogg; codecs=opus" });
-            // const audioURL = window.URL.createObjectURL(blob)
-            // "audio" below is a DOM object
-            audio.src = audioUrl;
-            // console.log(audioUrl);
-              audio.play();
-//               var reader = new FileReader();
-// //Passa o BLOB como parametro
-// reader.readAsText(audioBlob);
-// //Pode visualizar os dados gerados em texto
-// console.log(reader.result,reader);
-              speechToText(audioUrl);
-
-
-            
-            // Send the recorded audio to a server
-           
-        };
-
-         document.getElementById('stopRecording').addEventListener('click', function () {
-            mediaRecorder.stop();
-            console.log("Recording stopped...");
-        });
-        }).catch(function (err)
-        {
-            console.log(err);
-        });
-      
-
-     }
-
-
-
-    //   if (!('webkitSpeechRecognition' in window)) {
-    //     alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
-    // } else {
-    //     // Create a new instance of SpeechRecognition
-    //     const recognition = new webkitSpeechRecognition();
-
-    //     // Set properties
-    //     recognition.continuous = false; // Capture only one result
-    //     recognition.interimResults = false; // Get the final result, not partial results
-    //     recognition.lang = 'en-US'; // Set the language to English
-
-    //     // Start button click event
-    //     document.getElementById('startBtn').onclick = () => {
-    //         recognition.start(); // Start listening
-    //     };
-
-    //     // Handle the result when speech is detected
-    //     recognition.onresult = (event) => {
-    //         const transcript = event.results[0][0].transcript; // Get the speech result
-    //         // document.getElementById('result').innerText = `You said: ${transcript}`;
-    //         console.log(`You said: ${transcript}`);
-    //     };
-
-    //     // Handle any errors
-    //     recognition.onerror = (event) => {
-    //         console.error('Speech recognition error:', event.error);
-    //     };
-
-    //     // Log when the speech recognition service starts or ends
-    //     recognition.onstart = () => {
-    //         console.log('Speech recognition started');
-    //     };
-    //     recognition.onend = () => {
-    //         console.log('Speech recognition ended');
-    //     };
-    // }
-    
-
-    </script>
-
+document.onkeydown = evt => {
+  evt = evt || window.event;
+  evt.keyCode === 27 ? closeModal() : false;
+};
+ </script>
 <%- include('../includes/footer') %>

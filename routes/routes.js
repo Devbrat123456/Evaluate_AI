@@ -1,5 +1,46 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
+const filepath=path.join(__dirname,'../public/assets/profile/');
+const filepathResume=path.join(__dirname,'../public/assets/resume/');
+
+const multer = require('multer');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, filepath); 
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+})
+const storage2 = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, filepathResume); 
+    },
+    filename: function (req, file, cb) {
+
+        const timestamp = new Date().toISOString().replace(/:/g, '-'); // Format timestamp
+        const ext = path.extname(file.originalname); // Extract file extension
+        const basename = path.basename(file.originalname, ext);
+        // cb(null, file.originalname);
+         cb(null, `${timestamp}${ext}`);
+    }
+})
+
+
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']; // PDF & DOCX
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true); // Accept file
+    } else {
+        cb(new Error('Only PDF and DOCX files are allowed!'), false); // Reject file
+    }
+};
+const upload = multer({ storage: storage });
+const upload2 = multer({ storage: storage2,fileFilter,limits:{ fileSize: 5 * 1024 * 1024 } });
+
 /* 
 If you try to define router in app.js and import it into router.js, you'll create a circular dependency:
 
@@ -27,7 +68,16 @@ router.post('/fetchUserEmployement', userClass.FetchUserEmployement);
 router.post('/editUserEmployement', userClass.EditUserEmployement);
 router.post('/fetchUserEducation', userClass.FetchUserEducation);
 router.post('/editUserEducation', userClass.editUserEducation);
+router.post('/upload-profile',upload.any('profile') ,userClass.UploadProfile);
 
+router.post('/upload-resume', (req, res, next) => {
+    upload2.any('RESUME')(req, res, (err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: err.message });
+        }
+        next(); // Proceed to the controller if no errors
+    });
+}, userClass.UploadResume);
 router.get('/:page', home);
 router.get('*', (req, res) => {
     res.send("404 Page not found");

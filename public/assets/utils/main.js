@@ -10,12 +10,13 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.117.1/exampl
 
 
 
+
 const scene = new THREE.Scene();
 const clock = new THREE.Clock();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth/2, window.innerHeight);
+renderer.setSize(window.innerWidth / 2, window.innerHeight);
 camera.aspect = (window.innerWidth / 2) / window.innerHeight;
 camera.updateProjectionMatrix();
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -45,7 +46,7 @@ loader.load(
     function(gltf) {
         model = gltf.scene;
 
-        animationsArr=gltf.animations;
+        animationsArr = gltf.animations;
         // console.log(model,gltf);
         const skeletonHelper = new THREE.SkeletonHelper(model);
         model.position.set(0, -5, 0);
@@ -56,12 +57,12 @@ loader.load(
         const cameraHelper = new THREE.CameraHelper(camera);
 
         model.traverse((child) => {
-            
-            if (child.isSkinnedMesh && (child.name === 'Wolf3D_Head' || child.name === 'Wolf3D_Teeth' || child.name==="EyeLeft" || child.name==='EyeRight')) {
+
+            if (child.isSkinnedMesh && (child.name === 'Wolf3D_Head' || child.name === 'Wolf3D_Teeth' || child.name === "EyeLeft" || child.name === 'EyeRight')) {
                 skinnedMeshes.push(child); // Add to skinnedMeshes
                 morphTargetDictionaries[child.name] = child.morphTargetDictionary;
             }
-            
+
         });
 
         camera.position.set(0, 1, 2);
@@ -77,14 +78,13 @@ loader.load(
         // controls.update();
         // camera.position.set(model.position.x, model.position.y + 1, model.position.z + 2);
 
-        
-       
-        // setInterval(() => animateBlinkSmooth("eyeBlinkLeft", "eyeBlinkRight"), 2500);
-       
+
+
+        setInterval(() => animateBlinkSmooth("eyeBlinkLeft", "eyeBlinkRight"), 2500);
         addDimple('mouthDimpleLeft');
         addDimple('mouthDimpleRight');
         // loadAnimation();
-        
+
 
     },
     undefined,
@@ -93,44 +93,99 @@ loader.load(
     }
 );
 
-const phonemeToMorphTarget = {
-    "A": "viseme_PP",
-    "B": "viseme_kk",
-    "C": "viseme_I",
-    "D": "viseme_AA",
-    "E": "viseme_O",
-    "F": "viseme_U",
-    "G": "viseme_FF",
-    "H": "viseme_TH",
-    "I": "viseme_I",
-    "J": "viseme_aa",
-    "K": "viseme_kk",
-    "L": "viseme_FF",
-    "M": "viseme_PP",
-    "N": "viseme_N",
-    "O": "viseme_O",
-    "P": "viseme_PP",
-    "Q": "viseme_KK",
-    "R": "viseme_AA",
-    "S": "viseme_SS",
-    "T": "viseme_T",
-    "U": "viseme_U",
-    "V": "viseme_FF",
-    "W": "viseme_W",
-    "X": "viseme_KK",
-    "Y": "viseme_I",
-    "Z": "viseme_ZZ",
+// const phonemeToMorphTarget = {
+//     "A": "viseme_PP",
+//     "B": "viseme_kk",
+//     "C": "viseme_I",
+//     "D": "viseme_AA",
+//     "E": "viseme_O",
+//     "F": "viseme_U",
+//     "G": "viseme_FF",
+//     "H": "viseme_TH",
+//     "I": "viseme_I",
+//     "J": "viseme_aa",
+//     "K": "viseme_kk",
+//     "L": "viseme_FF",
+//     "M": "viseme_PP",
+//     "N": "viseme_N",
+//     "O": "viseme_O",
+//     "P": "viseme_PP",
+//     "Q": "viseme_KK",
+//     "R": "viseme_AA",
+//     "S": "viseme_SS",
+//     "T": "viseme_T",
+//     "U": "viseme_U",
+//     "V": "viseme_FF",
+//     "W": "viseme_W",
+//     "X": "viseme_KK",
+//     "Y": "viseme_I",
+//     "Z": "viseme_ZZ",
 
+// };
+
+const phonemeToMorphTarget = {
+    0: "viseme_sil",
+    1: "viseme_PP",  // "a" as in "father"
+    2: "viseme_FF",
+    3: "viseme_TH",  // "o" as in "dog"
+    4: "viseme_DD",  // "e" as in "bed"
+    5: "viseme_kk",  // "er" as in "butter"
+    6: "viseme_CH",  // "i" as in "bit"
+    7: "viseme_SS",  // "u" as in "book"
+    8: "viseme_nn",  // "o" as in "open"
+    9: "viseme_RR",  // "ee" as in "see"
+    10: "viseme_aa", // "oo" as in "you"
+    11: "viseme_E",  // "p", "b", "m" sounds
+    12: "viseme_I",  // "f", "v"
+    13: "viseme_O", // "th" as in "thing"
+    14: "viseme_U",  // "t", "d"
+    15: "viseme_S",  // "s", "z"
+    16: "viseme_SH", // "sh", "ch", "j"
+    17: "viseme_N",  // "n"
+    18: "viseme_L",  // "l"
+    19: "viseme_R",  // "r"
+    20: "viseme_W",  // "w"
+    21: "viseme_Y"   // "y"
 };
+
+
+const visemeToBlendShape = {
+    0: { jawOpen: 0.0 },             // Silence
+    1: { mouthApeShape: 1.0 },       // "a" (Father)
+    2: { mouthFunnel: 1.0 },         // "f", "v"
+    3: { mouthFunnel: 0.8 },         // "th" (Thing)
+    4: { mouthSmile: 1.0 },          // "e" (Bed)
+    5: { mouthShrugUpper: 1.0 },     // "er" (Butter)
+    6: { mouthFunnel: 1.0 },         // "i" (Bit)
+    7: { mouthPucker: 1.0 },         // "u" (Book)
+    8: { mouthOShape: 1.0 },         // "o" (Open)
+    9: { mouthOShape: 0.6 },         // "ee" (See)
+    10: { mouthOShape: 0.8 },        // "oo" (You)
+    11: { jawOpen: 0.2 },            // "p", "b", "m"
+    12: { mouthFunnel: 1.0 },        // "f", "v"
+    13: { mouthFunnel: 0.8 },        // "th" (Thing)
+    14: { jawOpen: 0.3 },            // "t", "d"
+    15: { mouthFunnel: 0.5 },        // "s", "z"
+    16: { mouthFunnel: 0.7 },        // "sh", "ch", "j"
+    17: { mouthSmile: 0.8 },         // "n"
+    18: { mouthShrugUpper: 0.8 },    // "l"
+    19: { mouthShrugUpper: 0.6 },    // "r"
+    20: { mouthPucker: 0.8 },        // "w"
+    21: { mouthFunnel: 0.9 }         // "y"
+};
+
 
 function animateLipSync(phoneme, intensity) {
     skinnedMeshes.forEach((mesh) => {
         const morphTargetDictionary = morphTargetDictionaries[mesh.name];
-
         if (morphTargetDictionary && morphTargetDictionary[phonemeToMorphTarget[phoneme]]) {
-
             const index = morphTargetDictionary[phonemeToMorphTarget[phoneme]];
-            mesh.morphTargetInfluences[index] = intensity;
+
+                gsap.to(mesh.morphTargetInfluences, {
+                    [index]: intensity, // Target the specific index
+                    duration: 0.2, // Adjust duration as needed
+                    ease: "power2.out" // Smooth animation
+                }); 
         }
     });
 }
@@ -146,8 +201,10 @@ function animateBlinkSmooth(leftEye, rightEye, duration = 0.2) {
 
             if (leftIndex !== undefined && rightIndex !== undefined) {
 
-                gsap.to(mesh.morphTargetInfluences, { [leftIndex]: 1, [rightIndex]: 1, duration: duration });
-                gsap.to(mesh.morphTargetInfluences, { [leftIndex]: 0, [rightIndex]: 0, duration: duration, delay: duration });
+                gsap.to(mesh.morphTargetInfluences, {
+                    [leftIndex]: 1, [rightIndex]: 1, duration: duration });
+                gsap.to(mesh.morphTargetInfluences, {
+                    [leftIndex]: 0, [rightIndex]: 0, duration: duration, delay: duration });
             }
         }
     });
@@ -162,8 +219,10 @@ function lookLeftReft(leftEye, duration = 0.2) {
 
             if (leftIndex !== undefined) {
 
-                gsap.to(mesh.morphTargetInfluences, { [leftIndex]: 1, duration: duration });
-                gsap.to(mesh.morphTargetInfluences, { [leftIndex]: 0, duration: duration, delay: duration });
+                gsap.to(mesh.morphTargetInfluences, {
+                    [leftIndex]: 1, duration: duration });
+                gsap.to(mesh.morphTargetInfluences, {
+                    [leftIndex]: 0, duration: duration, delay: duration });
             }
         }
     });
@@ -177,8 +236,6 @@ function addDimple(viseme) {
             let index = morphTargetDictionary[viseme];
 
             if (index !== undefined) {
-
-
                 mesh.morphTargetInfluences[index] = 1;
             }
         }
@@ -187,68 +244,67 @@ function addDimple(viseme) {
 // Call the function every 3 seconds
 
 
-
 function animateLipSyncSequence(sequence) {
-    if (sequence) {
-        sequence.forEach((timing) => {
+   if (sequence) {
+        let previousTiming = null;
+        
+        sequence.forEach((timing, i) => {
             setTimeout(() => {
-                animateLipSync(timing.value, 1.0);
-                setTimeout(() => {
-                    animateLipSync(timing.value, 0.0);
-                }, (timing.end - timing.start) * 1000);
-            }, timing.start * 1000);
+                let duration = (timing.end - timing.start);
+                let transitionDuration = previousTiming ? (timing.start - previousTiming.end) / 2 : duration / 2;
+
+                // Animate transition from the previous viseme to the new one
+                if (previousTiming) {
+                    animateLipSync(previousTiming.value, 0.0, transitionDuration);
+                }
+                
+                animateLipSync(timing.value, 1.0, duration);
+                previousTiming = timing;
+            }, timing.start);
         });
     }
 }
 
-function getAudioFile() {
-    $.ajax({
-        url: "/ChatBox/textToSpeech",
-        type: "GET",
-        data: {
-            'dataOnline': "The Node.js child_process module allows you to create and control child processes, enabling you to execute system commands, run scripts, and perform other operations outside the main Node.js process."
-        },
-        dataType: 'JSON',
-        success: function(response) {
-            if (response.audioFilePath) {
-                getJsonFileOfAudio(response.audioFilePath);
-            }
-            if (response.error) {
-                messagePop(response.error, 'error');
-            }
-        },
-        error: function(err) {
-            messagePop(err.responseJSON.message, 'error');
-        }
-    })
-}
 
-async function getJsonFileOfAudio(audioFilePath) {
-    $.ajax({
-        url: "/ChatBox/getJsonFile",
-        type: "GET",
-        dataType: 'JSON',
-        success: function(response) {
-            if (response.audioJsonFile) {
-                const audio = new Audio(audioFilePath);
-                audio.play();
-                audio.onplay = function() {
-                    animateLipSyncSequence(response.audioJsonFile);
-                };
-                audio.onended = function() {
-                    animateLipSync('K', 0.0);
-                };
-            }
-            if (response.error) {
-                messagePop(response.error, 'error');
-            }
-        },
-        error: function(err) {
-            messagePop(err.responseJSON.message, 'error');
-        }
-    })
+//  FIRST CONVERT TEXT TO AUDIO 
+function getAudioFile(speakingText) {
+    console.log("emmiting text file ");// so that the audio file and json file get generated , o
+    socket.emit('text_file',speakingText); 
+
 }
-// getAudioFile();
+let getJsonFileCount=1;
+socket.on('json_file',(jsonFile)=>{
+       if(getJsonFileCount==1)
+        $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
+    else
+        $('#generateQts').html("<span id='generateQtsSpan'>Next Quest. </span>");
+        playAudio(jsonFile.audioPath,jsonFile.jsonFile);
+        getJsonFileCount++;
+ }) 
+socket.on('audioPath',(audioPath)=>{
+     //  first i have got updated audio now i will get audio json file 
+        console.log(audioPath,"this is audio file");
+         socket.emit('get_json_file',audioPath);
+ }) 
+window.getAudioFile = getAudioFile;
+let  i=1;
+
+const playAudio =(audioFilePath,audioJsonFile)=>{
+        const audio = document.getElementById("audioPlay");
+        audio.src = audioFilePath.audipath;
+         $('#generateQtsSpan').off('click').on('click', () => {
+              audio.play()
+                .then(() => {
+                     console.log("calling "+i+"time");
+                     i++;
+                    appendingTexttoChatMessages(audioFilePath.speakingText);
+                    animateLipSyncSequence(audioJsonFile); 
+                })
+                .catch(error => {
+                    console.error("Playback failed:", error);
+                });;
+        })
+}
 
 let mixer;
 const Fbxloader = new FBXLoader();
@@ -258,9 +314,7 @@ let hasStarted = false;
 const loadAnimation = () => {
 
     animLoader.load('/model/ideal3.glb', (object) => {
-
-            mixer = new THREE.AnimationMixer(model);
-     
+        mixer = new THREE.AnimationMixer(model);
         if (object.animations.length > 0) {
             mixer.stopAllAction();
             action = mixer.clipAction(object.animations[0]);
@@ -287,23 +341,48 @@ function updateCamera() {
     if (model) { // Ensure model is loaded before using it
         camera.position.set(model.position.x, model.position.y + 1, model.position.z + 2);
         camera.lookAt(model.position);
-        console.log("indisd");
     }
 }
 let lastElapsedTime = 0
 
 function animate() {
     const delta = Math.max(clock.getDelta(), 0.016); // Ensures at least ~60 FPS delta
-
     const elapsedTime = clock.getElapsedTime()
-  const deltaTime = elapsedTime - lastElapsedTime
-  lastElapsedTime = elapsedTime
+    const deltaTime = elapsedTime - lastElapsedTime
+    lastElapsedTime = elapsedTime
     if (mixer) mixer.update(deltaTime);
-
-    // updateCamera();
-    if(model)
-    // animateBlink(model)
-    renderer.render(scene, camera);
-
+    if (model)
+        // animateBlink(model)
+        renderer.render(scene, camera);
 }
+
+let questionNo=1;
+const appendingTexttoChatMessages = (speakingText) => {
+    let date = new Date();
+    let words = speakingText.split(' ');
+  
+                    $('.chat-messages').append(`
+                     <div class="message received" id="received${questionNo}">
+                          <div class="message-content">
+                                    <input type="hidden" name="question[]" value="${speakingText}">
+                                    <p id="text${questionNo}"> </p>
+                                    <span class="timestamp">${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}</span>
+                        </div>
+                    </div>
+                    `);
+    appendtText(words,questionNo); // as function have block scope so , it will hold updated value of questionNo, for each call  not the last one , 
+     questionNo++;
+};
+
+const appendtText=(words,questionNo)=>{
+    console.log("question is"+questionNo)
+    let text ='';
+    words.forEach((val, index) => {  
+        setTimeout(() => {
+            text+=val+' ';
+            $('#text'+questionNo).text(text);
+        }, index * 400); 
+    });
+}
+
 
