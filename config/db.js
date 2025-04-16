@@ -21,7 +21,7 @@
 // module.exports = connection;
 
 const sql = require('mssql');
-
+console.log("env file ",process.env.MYSQL_USER_PRO,process.env.MYSQL_PASSWORD_PRO,process.env.MYSQL_PORT_PRO);
 const config = {
     user: process.env.MYSQL_USER_PRO,
     password: process.env.MYSQL_PASSWORD_PRO,
