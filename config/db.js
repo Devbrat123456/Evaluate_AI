@@ -29,7 +29,7 @@ const config = {
     database: process.env.MYSQL_DATABASE_PRO,
     port: parseInt(process.env.MYSQL_PORT_PRO) || 1433,
     options: {
-        encrypt: false,              // set true if you're using Azure
+        encrypt: true,              // set true if you're using Azure
         trustServerCertificate: true // allow self-signed certs for dev
     }
 };
