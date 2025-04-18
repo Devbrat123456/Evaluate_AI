@@ -363,7 +363,9 @@ const usersController = {
             let msg = {
                 'message': error.sqlMessage || "Something went wrong",
                 'status': 500,
+                'error':error
             }
+            console.log(error);
             return res.status(500).json(msg);
         }
     },
