@@ -45,26 +45,53 @@ class CommonModel {
     }
     async create(data) {
         // Generate placeholders for each column, like `?, ?, ?`
-        const columns = Object.keys(data).join(", ");
-        const placeholders = Object.keys(data).map(() => '?').join(", ");
-        const values = Object.values(data);
 
-        const query = `INSERT INTO ${this.#privateTableName}(${columns}) VALUES(${placeholders})`;
-        try {
-            await dbConnection.beginTransaction();
-            const result = new Promise((resolve, reject) => {
-                dbConnection.query(query, values, (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result);
-                });
-            });
+         const columns = Object.keys(data);
+    const values = Object.values(data);
 
-            await dbConnection.commit(); // Commit the transaction if everything goes well
-            return result;
-        } catch (error) {
-            await dbConnection.rollback();
-            throw error;
-        }
+    const columnList = columns.join(', ');
+    const paramList = columns.map((col, i) => `@param${i}`).join(', ');
+
+    const query = `INSERT INTO ${tableName} (${columnList}) VALUES (${paramList})`;
+
+    const transaction = new sql.Transaction(pool());
+
+    try {
+        await transaction.begin();
+
+        const request = transaction.request();
+        values.forEach((val, i) => {
+            request.input(`param${i}`, val); // you can explicitly type it like sql.VarChar if needed
+        });
+        const result = await request.query(query);
+
+        await transaction.commit();
+
+        return result;
+    } catch (err) {
+        await transaction.rollback();
+        throw err;
+    }
+        // const columns = Object.keys(data).join(", ");
+        // const placeholders = Object.keys(data).map(() => '?').join(", ");
+        // const values = Object.values(data);
+
+        // const query = `INSERT INTO ${this.#privateTableName}(${columns}) VALUES(${placeholders})`;
+        // try {
+        //     await dbConnection.beginTransaction();
+        //     const result = new Promise((resolve, reject) => {
+        //         dbConnection.query(query, values, (error, result) => {
+        //             if (error) return reject(error);
+        //             resolve(result);
+        //         });
+        //     });
+
+        //     await dbConnection.commit(); // Commit the transaction if everything goes well
+        //     return result;
+        // } catch (error) {
+        //     await dbConnection.rollback();
+        //     throw error;
+        // }
     }
 
     async edit(data) {

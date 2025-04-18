@@ -93,6 +93,7 @@ const usersController = {
 
 
         try {
+             console.log(dataToSave);
             const newUser = await UserModelInstance.create(dataToSave);
             let msg = {
                 'message': "Sign Up Success Fully Now you can Login!"
