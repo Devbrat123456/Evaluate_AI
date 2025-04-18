@@ -15,6 +15,7 @@ class CommonModel {
                 request.input('val', sql.VarChar, colvalue);
 
                 const result = await request.query(`SELECT * FROM ${tableName} WHERE ${col} = @val`);
+                 console.log(result);
                 return result.recordset; 
 
         // const [col] = Object.keys(data);
