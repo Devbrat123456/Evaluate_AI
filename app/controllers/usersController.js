@@ -108,6 +108,7 @@ const usersController = {
                 let msg = {
                     'message': 'Failed  to add Please Try Again! ' + error.sqlMessage
                 }
+                 console.log(error);
                 return res.status(500).json(msg);
             }
             req.flash('error', 'Failed  to add Please Try Again! ' + error.sqlMessage);
@@ -325,7 +326,7 @@ const usersController = {
 
             const data = await UserModelInstance.findOne({ EMAIL });
 
-            if (data.size>0) {
+            if (data.length>0) {
 
                 const isMatch = await bcrypt.compare(password, data[0].PASSWORD);
                 if (!isMatch) {
