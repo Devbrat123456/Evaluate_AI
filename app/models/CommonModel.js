@@ -1,4 +1,5 @@
-const dbConnection = require('../../config/db');
+// const dbConnection = require('../../config/db');
+const {sql,pool}= require('../../config/db');
 
 class CommonModel {
     #privateTableName;
@@ -7,18 +8,28 @@ class CommonModel {
         this.#privateTableName = tableName;
     }
     async findOne(data) {
-        const [col] = Object.keys(data);
-        const colvalue = data?.[col];
+                const [col] = Object.keys(data);
+                const colvalue = data[col];
 
-        return new Promise((resolve, reject) => {
-            dbConnection.query(`select * from  ${this.#privateTableName}  where ${col} = '${colvalue}'`, [], (error, result) => {
-                if (!error) {
-                    resolve(result);
-                } else {
-                    reject(error);
-                }
-            })
-        })
+                const request = pool().request();
+                request.input('val', sql.VarChar, colvalue);
+
+                const result = await request.query(`SELECT * FROM ${tableName} WHERE ${col} = @val`);
+                return result.recordset; 
+
+        // const [col] = Object.keys(data);
+        // const colvalue = data?.[col];
+
+
+        // return new Promise((resolve, reject) => {
+        //     dbConnection.query(`select * from  ${this.#privateTableName}  where ${col} = '${colvalue}'`, [], (error, result) => {
+        //         if (!error) {
+        //             resolve(result);
+        //         } else {
+        //             reject(error);
+        //         }
+        //     })
+        // })
     }
     async findAll() {
         return new Promise((resolve, reject) => {
