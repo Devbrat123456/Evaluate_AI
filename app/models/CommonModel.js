@@ -52,7 +52,7 @@ class CommonModel {
     const columnList = columns.join(', ');
     const paramList = columns.map((col, i) => `@param${i}`).join(', ');
 
-    const query = `INSERT INTO ${tableName} (${columnList}) VALUES (${paramList})`;
+    const query = `INSERT INTO ${this.#privateTableName} (${columnList}) VALUES (${paramList})`;
 
     const transaction = new sql.Transaction(pool());
 
