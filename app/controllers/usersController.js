@@ -324,7 +324,7 @@ const usersController = {
 
             const data = await UserModelInstance.findOne({ EMAIL });
 
-            if (data) {
+            if (data.size>0) {
 
                 const isMatch = await bcrypt.compare(password, data[0].PASSWORD);
                 if (!isMatch) {
