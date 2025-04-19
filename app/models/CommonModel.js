@@ -15,33 +15,24 @@ class CommonModel {
                 request.input('val', sql.VarChar, colvalue);
 
                 const result = await request.query(`SELECT * FROM ${this.#privateTableName} WHERE ${col} = @val`);
-                 console.log(result,`SELECT * FROM ${this.#privateTableName} WHERE ${col} = @val`,'this is query');
                 return result.recordset; 
 
-        // const [col] = Object.keys(data);
-        // const colvalue = data?.[col];
-
-
-        // return new Promise((resolve, reject) => {
-        //     dbConnection.query(`select * from  ${this.#privateTableName}  where ${col} = '${colvalue}'`, [], (error, result) => {
-        //         if (!error) {
-        //             resolve(result);
-        //         } else {
-        //             reject(error);
-        //         }
-        //     })
-        // })
     }
     async findAll() {
-        return new Promise((resolve, reject) => {
-            dbConnection.query(`select * from ${this.#privateTableName}`, [], (error, result) => {
-                if (!error) {
-                    resolve(result);
-                } else {
-                    reject(error);
-                }
-            });
-        })
+        return new Promise(async (resolve, reject) => {
+            try {
+                const request = pool().request();
+
+                // Make sure this.#privateTableName is safe (no user input to avoid SQL Injection!)
+                const result = await request.query(`SELECT * FROM ${this.#privateTableName}`);
+
+                resolve(result.recordset);
+            } catch (error) {
+                reject(error);
+            }
+        });
+
+
     }
     async create(data) {
         // Generate placeholders for each column, like `?, ?, ?`
@@ -72,15 +63,70 @@ class CommonModel {
         await transaction.rollback();
         throw err;
     }
-        // const columns = Object.keys(data).join(", ");
-        // const placeholders = Object.keys(data).map(() => '?').join(", ");
-        // const values = Object.values(data);
+    }
 
-        // const query = `INSERT INTO ${this.#privateTableName}(${columns}) VALUES(${placeholders})`;
+    async edit(data) {
+
+    }
+    async update(data, condition) {
+
+        const keys = Object.keys(data);
+        const values = Object.values(data);
+    const setClause = keys.map((key, index) => `${key} = @param${index}`).join(', ');
+    const query = `UPDATE ${this.#privateTableName} SET ${setClause} WHERE ${condition}`;
+
+    const transaction = new sql.Transaction();
+    try {
+        await transaction.begin();
+
+        const request = new sql.Request(transaction);
+
+        // Bind all values to parameters
+        keys.forEach((key, index) => {
+            request.input(`param${index}`, values[index]);
+        });
+
+        const result = await request.query(query);
+
+        await transaction.commit();
+        return result.rowsAffected;
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+    }
+    async delete(idObj) {
+
+    const [col] = Object.keys(idObj);
+    const colValue = idObj?.[col];
+    
+    const query = `DELETE FROM ${this.#privateTableName} WHERE ${col} = @value`;
+
+    const transaction = new sql.Transaction();
+
+    try {
+        await transaction.begin();
+
+        const request = new sql.Request(transaction);
+        request.input('value', colValue);
+
+        const result = await request.query(query);
+
+        await transaction.commit();
+        return result.rowsAffected;
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+
+        // const [col] = Object.keys(idObj);
+        // const colvalue = idObj?.[col];
+        // const query = `delete from ${this.#privateTableName} where ${col} = ${colvalue} `;
+
         // try {
         //     await dbConnection.beginTransaction();
         //     const result = new Promise((resolve, reject) => {
-        //         dbConnection.query(query, values, (error, result) => {
+        //         dbConnection.query(query, [], (error, result) => {
         //             if (error) return reject(error);
         //             resolve(result);
         //         });
@@ -94,108 +140,104 @@ class CommonModel {
         // }
     }
 
-    async edit(data) {
-
-    }
-    async update(data, condition) {
-
-        const keys = Object.keys(data);
-        const values = Object.values(data);
-        const setClause = keys.map((key, index) => `${key} = ? `).join(', ');
-        const query = `UPDATE ${this.#privateTableName} SET ${setClause} WHERE ${condition}`;
-        console.log(query);
-
-        try {
-            await dbConnection.beginTransaction();
-            const result = new Promise((resolve, reject) => {
-                dbConnection.query(query, values, (error, result) => {
-                    if (error) {
-                        reject(error); // Reject the promise if there’s an error
-                    } else {
-                        resolve(result); // Resolve the promise with the result of the insert operation
-                    }
-                });
-            });
-
-            await dbConnection.commit(); // Commit the transaction if everything goes well
-            return result;
-        } catch (error) {
-            await dbConnection.rollback();
-            throw error;
-        }
-    }
-    async delete(idObj) {
-        const [col] = Object.keys(idObj);
-        const colvalue = idObj?.[col];
-        const query = `delete from ${this.#privateTableName} where ${col} = ${colvalue} `;
-
-        try {
-            await dbConnection.beginTransaction();
-            const result = new Promise((resolve, reject) => {
-                dbConnection.query(query, [], (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result);
-                });
-            });
-
-            await dbConnection.commit(); // Commit the transaction if everything goes well
-            return result;
-        } catch (error) {
-            await dbConnection.rollback();
-            throw error;
-        }
-    }
-
     async buildDynamicQueryJoin(tables, columns, joins, conditions = [],groupBy=[],orderBy=[]) {
-        let sql = "SELECT ";
-        sql += columns.map(() => "??").join(", "); // Use placeholders for column names
+        // let sql = "SELECT ";
+        // sql += columns.map(() => "??").join(", "); // Use placeholders for column names
 
-        let params = [];
-        sql += ` FROM ?? `; // Placeholder for the main table name
+        // let params = [];
+        // sql += ` FROM ?? `; // Placeholder for the main table name
 
-        columns.forEach(col => {
-            params.push(col);
+        // columns.forEach(col => {
+        //     params.push(col);
+        // });
+
+        // params.push(tables[0]);
+        // joins.forEach(join => {
+        //     sql += ` ${join.type} JOIN ?? ON ${join.on} `;
+        //     params.push(join.table);
+        // });
+
+        // if (conditions.length > 0) {
+        //     sql += ` WHERE ` + conditions.map(() => "?? = ?").join(" AND ");
+        //     conditions.forEach(condition => {
+        //         params.push(condition.column, condition.value);
+        //     });
+        // }
+        // if (groupBy.length > 0) {
+        //     sql += ` GROUP BY ` + conditions.map(() => "?? = ?").join(",");
+        //     groupBy.forEach(condition => {
+        //         params.push(condition);
+        //     });
+        // }
+        //  if (orderBy.length > 0) {
+        //     sql += ` ORDER BY ` + conditions.map(() => "?? = ?").join(",");
+        //     orderBy.forEach(condition => {
+        //         params.push(condition);
+        //     });
+        // }
+        // try {
+        //     await dbConnection.beginTransaction();
+        //     const result = new Promise((resolve, reject) => {
+        //         dbConnection.query(sql, params, (error, result) => {
+        //             if (error) return reject(error);
+        //             resolve(result);
+        //         });
+        //     });
+
+        //     await dbConnection.commit(); // Commit the transaction if everything goes well
+        //     return result;
+        // } catch (error) {
+        //     await dbConnection.rollback();
+        //     throw error;
+        // }
+
+         let sqlQuery = "SELECT ";
+    sqlQuery += columns.join(", "); // Directly join column names
+
+    sqlQuery += ` FROM ${tables[0]} `;
+
+    joins.forEach(join => {
+        sqlQuery += ` ${join.type} JOIN ${join.table} ON ${join.on} `;
+    });
+
+    let whereClauses = [];
+    let groupClauses = [];
+    let orderClauses = [];
+    let request = new sql.Request();
+
+    // Handling WHERE conditions
+    if (conditions.length > 0) {
+        conditions.forEach((condition, index) => {
+            const paramName = `cond${index}`;
+            whereClauses.push(`${condition.column} = @${paramName}`);
+            request.input(paramName, condition.value);
         });
+        sqlQuery += ` WHERE ` + whereClauses.join(" AND ");
+    }
 
-        params.push(tables[0]);
-        joins.forEach(join => {
-            sql += ` ${join.type} JOIN ?? ON ${join.on} `;
-            params.push(join.table);
-        });
+    // Handling GROUP BY
+    if (groupBy.length > 0) {
+        sqlQuery += ` GROUP BY ` + groupBy.join(", ");
+    }
 
-        if (conditions.length > 0) {
-            sql += ` WHERE ` + conditions.map(() => "?? = ?").join(" AND ");
-            conditions.forEach(condition => {
-                params.push(condition.column, condition.value);
-            });
-        }
-        if (groupBy.length > 0) {
-            sql += ` GROUP BY ` + conditions.map(() => "?? = ?").join(",");
-            groupBy.forEach(condition => {
-                params.push(condition);
-            });
-        }
-         if (orderBy.length > 0) {
-            sql += ` ORDER BY ` + conditions.map(() => "?? = ?").join(",");
-            orderBy.forEach(condition => {
-                params.push(condition);
-            });
-        }
-        try {
-            await dbConnection.beginTransaction();
-            const result = new Promise((resolve, reject) => {
-                dbConnection.query(sql, params, (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result);
-                });
-            });
+    // Handling ORDER BY
+    if (orderBy.length > 0) {
+        sqlQuery += ` ORDER BY ` + orderBy.join(", ");
+    }
 
-            await dbConnection.commit(); // Commit the transaction if everything goes well
-            return result;
-        } catch (error) {
-            await dbConnection.rollback();
-            throw error;
-        }
+    try {
+        const transaction = new sql.Transaction();
+
+        await transaction.begin();
+
+        const result = await request.query(sqlQuery);
+
+        await transaction.commit();
+        return result.recordset;
+    } catch (error) {
+        console.error("Transaction failed:", error);
+        throw error;
+    }
 
 
         // console.log(sql, params);  

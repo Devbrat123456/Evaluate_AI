@@ -166,8 +166,9 @@ const usersController = {
 
         try {
             const deleteStatus = await UserModelInstance.delete({ id });
+            console.log(deleteStatus);
 
-            if (deleteStatus.affectedRows > 0) {
+            if (deleteStatus > 0) {
 
                 res.status(200).json({
                     success: true,
@@ -177,6 +178,7 @@ const usersController = {
                 res.status(200).json({
                     success: false,
                     message: `Resource with ID ${id} not found or could not be deleted.`,
+                    error:deleteStatus
                 });
             }
         } catch (err) {
