@@ -5,7 +5,7 @@
     --whatsapp-dark-green: #128C7E;
 
     --whatsapp-chat-bg: #000;
-
+    --teal-light:#20c997;
 }
 .avatar-container{
     margin-top: 11vh;
@@ -261,6 +261,16 @@ input[type="text"] {
     font-size: 14px;
 
 }
+
+#SubmitAnswerButton{
+    font-size: 20px;
+    padding: 1px 5px;
+}
+#SubmitAnswerButton:hover{
+    background-color: var(--teal-light);
+
+}
+
 
 
 .send-button {

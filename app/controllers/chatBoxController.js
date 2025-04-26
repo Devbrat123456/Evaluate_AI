@@ -3,6 +3,7 @@ const CommonModel = require('../models/CommonModel');
 const userModel = new CommonModel('users');
 const skillModel = new CommonModel('skills');
 const questionModel = new CommonModel('questions');
+const CandidateResponsesModel = new CommonModel('CandidateResponses');
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const readline = require("readline");
 const path = require("path");
@@ -235,11 +236,11 @@ const chatBoxController = {
              }
 
      },
-     updateAnser:async(req,res)=>{
+     updateAnswer:async(req,res)=>{
           try{
                 const {user_id,question_id,user_answer}=req.body;
-                            let status=questionModel.update({user_answer},`id=${question_id}`);
-                            return res.status(200).json(status);
+                let status=CandidateResponsesModel.update({user_answer},`question_id=${question_id}`);
+                return res.status(200).json(status);
           }
           catch(error){
             return res.status(500).json(error);

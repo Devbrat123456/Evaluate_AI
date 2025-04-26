@@ -25,6 +25,7 @@ router.get('/getJsonFile', chatBoxController.getJsonFileFun);
 router.post('/storeAnswer', chatBoxController.storeAnswer);
 router.post('/getQuestion', chatBoxController.getQuestion);
 router.post('/generateResult', chatBoxController.generateResult);
+router.post('/updateAnswer', chatBoxController.updateAnswer);
 
 
 module.exports = router

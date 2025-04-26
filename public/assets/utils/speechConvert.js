@@ -9,7 +9,7 @@ let isRecognizing = false;
     const recognition = new webkitSpeechRecognition();
 
     recognition.continuous = false; // Capture only one result
-    recognition.interimResults = false; // Get the final result, not partial results
+    recognition.interimResults = true; // Get the final result, not partial results
     recognition.lang = 'en-US'; // Set the language to English
     
     document.getElementById('startBtn').onclick = () => {
@@ -29,27 +29,8 @@ let isRecognizing = false;
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript; // Get the speech result
         // document.getElementById('result').innerText = `You said: ${transcript}`;
-        console.log(`You said: ${transcript}`);
-        $('#user_answer').val(transcript);
-        let date= new Date();
-
-        $('.chat-messages').append(` <div class="message sent">
-            <div class="message-content">
-                <input type="hidden" name="answer[]" value="${transcript}">
-                <p class="receive-text">${transcript}</p>
-                 <div class="words" contenteditable>
-                         <p id="p"></p>
-                         <p id="message"></p>
-                 </div>
-                <span class="timestamp">${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}</span>
-                <div class="status-indicator">
-                    <i class="fas fa-check-double"></i>
-                </div>
-                <div class="edit-box" > 
-                    <i class="fas fa-edit" onclick="getDatatoEdit(this)"></i>
-                </div>
-            </div>
-        </div>`);
+      
+        $('#userAnswerInput').val(transcript);
        
     };
 
@@ -63,6 +44,46 @@ let isRecognizing = false;
        processAfterEndingRecognitsation();
     };
 }
+
+  const onUserSumbmitAnswer =()=>{
+        let transcript =  $('#userAnswerInput').val();
+        let question_id =  $('#question_id').val();
+         if(transcript)
+         {
+                onUserSumbmitAnswerFutherAction(transcript,question_id);
+         }else{
+            messagePop("No answer Found",'error');
+         }
+       
+  }
+   const onUserSumbmitAnswerFutherAction =(transcript,question_id)=>{
+     $('#SubmitAnswerButton').css('background-color','#128C7E');
+     $('#user_answer').val(transcript);
+      let date= new Date();
+      afterSubmitAppendUserAnswer(transcript,date,question_id);
+    
+   }
+    const afterSubmitAppendUserAnswer=(transcript,date,question_id)=>{
+        $('.chat-messages').append(` <div class="message sent">
+            <div class="message-content">
+                <input type="hidden" name="answer[]" value="${transcript}">
+                <p class="receive-text" question_id="${question_id}">${transcript}</p>
+                 <div class="words" contenteditable>
+                         <p id="p"></p>
+                         <p id="message"></p>
+                 </div>
+                <span class="timestamp">${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}</span>
+                <div class="status-indicator">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <div class="edit-box" > 
+                    <i class="fas fa-edit" onclick="getDatatoEdit(this)" question_id="${question_id}"></i>
+                </div>
+            </div>
+        </div>`);
+        $('#userAnswerInput').val('');
+
+    }
 
 const processAfterEndingRecognitsation=()=>{
       
@@ -233,6 +254,7 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
 
 function  getDatatoEdit(event){
     let receiveText =$(event).closest('.sent').find('.receive-text');
+    let question_id =$(event).attr('question_id');
     receiveText.attr('contenteditable', true).focus();
     receiveText.css({
         border: '1px solid #ccc',
@@ -242,6 +264,8 @@ function  getDatatoEdit(event){
     receiveText.on('blur', function () {
         receiveText.attr('contenteditable', false);
         receiveText.removeAttr('style'); 
+        afterEditUpdateAnswer(question_id);
+
     });
     receiveText.on('keydown', function (e) {
         if (e.key === 'Enter') {
@@ -249,5 +273,21 @@ function  getDatatoEdit(event){
             receiveText.blur(); 
         }
     });
+}
+
+const afterEditUpdateAnswer =(question_id)
+{
+
+    let url=`/updateAnswer`;
+    let parameters={
+        method:"POST",
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+        "question_id": question_id,
+        })
+    };
+
 }
 
