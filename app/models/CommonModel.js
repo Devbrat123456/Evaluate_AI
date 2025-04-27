@@ -72,124 +72,93 @@ class CommonModel {
 
         const keys = Object.keys(data);
         const values = Object.values(data);
-    const setClause = keys.map((key, index) => `${key} = @param${index}`).join(', ');
-    const query = `UPDATE ${this.#privateTableName} SET ${setClause} WHERE ${condition}`;
+        const setClause = keys.map((key, index) => `${key} = @param${index}`).join(', ');
+        const query = `UPDATE ${this.#privateTableName} SET ${setClause} WHERE ${condition}`;
 
-    const transaction = new sql.Transaction();
-    try {
-        await transaction.begin();
+        const transaction = new sql.Transaction();
+        try {
+            await transaction.begin();
 
-        const request = new sql.Request(transaction);
+            const request = new sql.Request(transaction);
 
-        // Bind all values to parameters
-        keys.forEach((key, index) => {
-            request.input(`param${index}`, values[index]);
-        });
+            keys.forEach((key, index) => {
+                request.input(`param${index}`, values[index]);
+            });
 
-        const result = await request.query(query);
+            const result = await request.query(query);
 
-        await transaction.commit();
-        return result.rowsAffected;
-    } catch (error) {
-        await transaction.rollback();
-        throw error;
+            await transaction.commit();
+            return result.rowsAffected;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
     }
+    async updateOnMultipleCol(data,conditions)
+    {
+
+        const keys = Object.keys(data);
+        const values = Object.values(data);
+        const setClause = keys.map((key, index) => `${key} = @param${index}`).join(', ');
+        const query = `UPDATE ${this.#privateTableName} SET ${setClause} `;
+
+        if (conditions.length > 0) {
+            conditions.forEach((condition, index) => {
+                const paramName = `cond${index}`;
+                whereClauses.push(`${condition.column} = @${paramName}`);
+                request.input(paramName, condition.value);
+            });
+            query += ` WHERE ` + whereClauses.join(" AND ");
+        }
+        console.log(query);
+
+
+        const transaction = new sql.Transaction();
+        try {
+            await transaction.begin();
+
+            const request = new sql.Request(transaction);
+
+            keys.forEach((key, index) => {
+                request.input(`param${index}`, values[index]);
+            });
+
+            const result = await request.query(query);
+
+            await transaction.commit();
+            return result.rowsAffected;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        } 
     }
     async delete(idObj) {
 
-    const [col] = Object.keys(idObj);
-    const colValue = idObj?.[col];
-    
-    const query = `DELETE FROM ${this.#privateTableName} WHERE ${col} = @value`;
+        const [col] = Object.keys(idObj);
+        const colValue = idObj?.[col];
+        
+        const query = `DELETE FROM ${this.#privateTableName} WHERE ${col} = @value`;
 
-    const transaction = new sql.Transaction();
+        const transaction = new sql.Transaction();
 
-    try {
-        await transaction.begin();
+        try {
+            await transaction.begin();
 
-        const request = new sql.Request(transaction);
-        request.input('value', colValue);
+            const request = new sql.Request(transaction);
+            request.input('value', colValue);
 
-        const result = await request.query(query);
+            const result = await request.query(query);
 
-        await transaction.commit();
-        return result.rowsAffected;
-    } catch (error) {
-        await transaction.rollback();
-        throw error;
-    }
+            await transaction.commit();
+            return result.rowsAffected;
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
+        }
 
-        // const [col] = Object.keys(idObj);
-        // const colvalue = idObj?.[col];
-        // const query = `delete from ${this.#privateTableName} where ${col} = ${colvalue} `;
-
-        // try {
-        //     await dbConnection.beginTransaction();
-        //     const result = new Promise((resolve, reject) => {
-        //         dbConnection.query(query, [], (error, result) => {
-        //             if (error) return reject(error);
-        //             resolve(result);
-        //         });
-        //     });
-
-        //     await dbConnection.commit(); // Commit the transaction if everything goes well
-        //     return result;
-        // } catch (error) {
-        //     await dbConnection.rollback();
-        //     throw error;
-        // }
     }
 
     async buildDynamicQueryJoin(tables, columns, joins, conditions = [],groupBy=[],orderBy=[]) {
-        // let sql = "SELECT ";
-        // sql += columns.map(() => "??").join(", "); // Use placeholders for column names
-
-        // let params = [];
-        // sql += ` FROM ?? `; // Placeholder for the main table name
-
-        // columns.forEach(col => {
-        //     params.push(col);
-        // });
-
-        // params.push(tables[0]);
-        // joins.forEach(join => {
-        //     sql += ` ${join.type} JOIN ?? ON ${join.on} `;
-        //     params.push(join.table);
-        // });
-
-        // if (conditions.length > 0) {
-        //     sql += ` WHERE ` + conditions.map(() => "?? = ?").join(" AND ");
-        //     conditions.forEach(condition => {
-        //         params.push(condition.column, condition.value);
-        //     });
-        // }
-        // if (groupBy.length > 0) {
-        //     sql += ` GROUP BY ` + conditions.map(() => "?? = ?").join(",");
-        //     groupBy.forEach(condition => {
-        //         params.push(condition);
-        //     });
-        // }
-        //  if (orderBy.length > 0) {
-        //     sql += ` ORDER BY ` + conditions.map(() => "?? = ?").join(",");
-        //     orderBy.forEach(condition => {
-        //         params.push(condition);
-        //     });
-        // }
-        // try {
-        //     await dbConnection.beginTransaction();
-        //     const result = new Promise((resolve, reject) => {
-        //         dbConnection.query(sql, params, (error, result) => {
-        //             if (error) return reject(error);
-        //             resolve(result);
-        //         });
-        //     });
-
-        //     await dbConnection.commit(); // Commit the transaction if everything goes well
-        //     return result;
-        // } catch (error) {
-        //     await dbConnection.rollback();
-        //     throw error;
-        // }
 
          let sqlQuery = "SELECT ";
     sqlQuery += columns.join(", "); // Directly join column names

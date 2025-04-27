@@ -7,217 +7,247 @@
     },
     {
       "start": 50,
-      "end": 100,
+      "end": 87.5,
       "value": 7
     },
     {
-      "start": 100,
-      "end": 187.5,
+      "start": 87.5,
+      "end": 125,
       "value": 2
     },
     {
-      "start": 187.5,
-      "end": 250,
+      "start": 125,
+      "end": 175,
       "value": 19
     },
     {
-      "start": 250,
-      "end": 275,
+      "start": 175,
+      "end": 212.5,
       "value": 6
     },
     {
-      "start": 275,
-      "end": 325,
+      "start": 212.5,
+      "end": 262.5,
       "value": 15
     },
     {
-      "start": 325,
-      "end": 375,
-      "value": 17
-    },
-    {
-      "start": 375,
-      "end": 412.5,
+      "start": 262.5,
+      "end": 337.5,
       "value": 1
     },
     {
-      "start": 412.5,
-      "end": 462.5,
-      "value": 19
+      "start": 337.5,
+      "end": 487.5,
+      "value": 21
     },
     {
-      "start": 462.5,
-      "end": 512.5,
-      "value": 6
-    },
-    {
-      "start": 512.5,
-      "end": 587.5,
-      "value": 18
-    },
-    {
-      "start": 587.5,
-      "end": 650,
+      "start": 487.5,
+      "end": 575,
       "value": 13
     },
     {
-      "start": 650,
-      "end": 700,
-      "value": 1
+      "start": 575,
+      "end": 687.5,
+      "value": 11
     },
     {
-      "start": 700,
-      "end": 762.5,
-      "value": 19
-    },
-    {
-      "start": 762.5,
-      "end": 837.5,
-      "value": 15
-    },
-    {
-      "start": 837.5,
-      "end": 925,
+      "start": 687.5,
+      "end": 812.5,
       "value": 21
     },
     {
-      "start": 925,
-      "end": 962.5,
-      "value": 6
-    },
-    {
-      "start": 962.5,
-      "end": 987.5,
-      "value": 19
-    },
-    {
-      "start": 987.5,
-      "end": 1075,
-      "value": 7
-    },
-    {
-      "start": 1075,
-      "end": 1125,
-      "value": 6
-    },
-    {
-      "start": 1125,
-      "end": 1187.5,
-      "value": 19
-    },
-    {
-      "start": 1187.5,
-      "end": 1262.5,
-      "value": 19
-    },
-    {
-      "start": 1262.5,
-      "end": 1337.5,
-      "value": 6
-    },
-    {
-      "start": 1337.5,
-      "end": 1437.5,
-      "value": 19
-    },
-    {
-      "start": 1437.5,
-      "end": 1487.5,
-      "value": 6
-    },
-    {
-      "start": 1487.5,
-      "end": 1562.5,
+      "start": 812.5,
+      "end": 862.5,
       "value": 4
     },
     {
-      "start": 1562.5,
-      "end": 1762.5,
-      "value": 14
+      "start": 862.5,
+      "end": 950,
+      "value": 13
     },
     {
-      "start": 1762.5,
-      "end": 1850,
+      "start": 950,
+      "end": 1012.5,
+      "value": 6
+    },
+    {
+      "start": 1012.5,
+      "end": 1100,
+      "value": 20
+    },
+    {
+      "start": 1100,
+      "end": 1212.5,
+      "value": 6
+    },
+    {
+      "start": 1212.5,
+      "end": 1475,
       "value": 0
     },
     {
-      "start": 1850,
-      "end": 2125,
+      "start": 1475,
+      "end": 1825,
+      "value": 0
+    },
+    {
+      "start": 1825,
+      "end": 1875,
+      "value": 20
+    },
+    {
+      "start": 1875,
+      "end": 1950,
+      "value": 1
+    },
+    {
+      "start": 1950,
+      "end": 1987.5,
       "value": 19
     },
     {
-      "start": 2125,
-      "end": 2187.5,
+      "start": 1987.5,
+      "end": 2025,
+      "value": 1
+    },
+    {
+      "start": 2025,
+      "end": 2100,
+      "value": 19
+    },
+    {
+      "start": 2100,
+      "end": 2275,
+      "value": 4
+    },
+    {
+      "start": 2275,
+      "end": 2318.75,
       "value": 6
     },
     {
-      "start": 2187.5,
-      "end": 2262.5,
-      "value": 4
-    },
-    {
-      "start": 2262.5,
-      "end": 2375,
+      "start": 2318.75,
+      "end": 2362.5,
       "value": 21
     },
     {
-      "start": 2375,
+      "start": 2362.5,
+      "end": 2400,
+      "value": 1
+    },
+    {
+      "start": 2400,
       "end": 2437.5,
-      "value": 4
+      "value": 14
     },
     {
       "start": 2437.5,
-      "end": 2612.5,
-      "value": 14
+      "end": 2512.5,
+      "value": 12
     },
     {
-      "start": 2612.5,
-      "end": 2750,
-      "value": 0
-    },
-    {
-      "start": 2750,
-      "end": 2962.5,
+      "start": 2512.5,
+      "end": 2600,
       "value": 1
     },
     {
-      "start": 2962.5,
-      "end": 3062.5,
+      "start": 2600,
+      "end": 2737.5,
+      "value": 18
+    },
+    {
+      "start": 2737.5,
+      "end": 2812.5,
+      "value": 21
+    },
+    {
+      "start": 2812.5,
+      "end": 2925,
+      "value": 1
+    },
+    {
+      "start": 2925,
+      "end": 2975,
+      "value": 14
+    },
+    {
+      "start": 2975,
+      "end": 3037.5,
       "value": 19
     },
     {
-      "start": 3062.5,
-      "end": 3375,
-      "value": 19
+      "start": 3037.5,
+      "end": 3087.5,
+      "value": 1
     },
     {
-      "start": 3375,
-      "end": 3437.5,
-      "value": 6
+      "start": 3087.5,
+      "end": 3125,
+      "value": 21
     },
     {
-      "start": 3437.5,
-      "end": 3550,
-      "value": 15
+      "start": 3125,
+      "end": 3150,
+      "value": 1
     },
     {
-      "start": 3550,
+      "start": 3150,
+      "end": 3200,
+      "value": 14
+    },
+    {
+      "start": 3200,
+      "end": 3275,
+      "value": 21
+    },
+    {
+      "start": 3275,
+      "end": 3337.5,
+      "value": 13
+    },
+    {
+      "start": 3337.5,
+      "end": 3400,
+      "value": 11
+    },
+    {
+      "start": 3400,
+      "end": 3487.5,
+      "value": 21
+    },
+    {
+      "start": 3487.5,
+      "end": 3537.5,
+      "value": 4
+    },
+    {
+      "start": 3537.5,
+      "end": 3612.5,
+      "value": 13
+    },
+    {
+      "start": 3612.5,
       "end": 3662.5,
       "value": 6
     },
     {
       "start": 3662.5,
-      "end": 3712.5,
-      "value": 4
+      "end": 3725,
+      "value": 20
     },
     {
-      "start": 3712.5,
-      "end": 3837.5,
-      "value": 14
+      "start": 3725,
+      "end": 3825,
+      "value": 6
     },
     {
-      "start": 3837.5,
-      "end": 4012,
+      "start": 3825,
+      "end": 4037.5,
+      "value": 15
+    },
+    {
+      "start": 4037.5,
+      "end": 4262,
       "value": 0
     }
   ]

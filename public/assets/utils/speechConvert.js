@@ -8,21 +8,29 @@ let isRecognizing = false;
     // Create a new instance of SpeechRecognition
     const recognition = new webkitSpeechRecognition();
 
-    recognition.continuous = false; // Capture only one result
+    recognition.continuous = true; // Capture only one result
     recognition.interimResults = true; // Get the final result, not partial results
     recognition.lang = 'en-US'; // Set the language to English
     
-    document.getElementById('startBtn').onclick = () => {
-            console.log(isRecognizing,"recognition");
+const micButton = document.getElementById('startBtn'); // or stopBtn initially
+let isRecognizing = false;
 
-         if(!isRecognizing){
-            recognition.start(); // Start listening
-            isRecognizing = true;
-            console.log("starting the mic");
-            document.getElementById('mic').classList.add('recording');
+micButton.addEventListener('click', function(event) {
+    if (!isRecognizing) {
+        recognition.start();
+        isRecognizing = true;
+        console.log("starting the mic");
+        micButton.id = 'stopbtn';
+        document.getElementById('mic').classList.add('recording');
+    } else {
+        micButton.id = 'startBtn';
+        recognition.stop();
+        isRecognizing = false;
+        console.log("stopping the mic");
+        // document.getElementById('mic').classList.remove('recording');
+    }
+});
 
-         }
-    };
 
     // Handle the result when speech is detected
 
@@ -41,9 +49,14 @@ let isRecognizing = false;
         console.log('Speech recognition started');
     };
     recognition.onend = () => {
-       processAfterEndingRecognitsation();
+        $('#generateQts').html(' <i class="fa fa-spinner fa-spin"></i>Loading');
+         $('#startBtn').addClass('displayNone');
+         document.getElementById('mic').classList.remove('recording');
     };
+
 }
+
+
 
   const onUserSumbmitAnswer =()=>{
         let transcript =  $('#userAnswerInput').val();
@@ -82,6 +95,7 @@ let isRecognizing = false;
             </div>
         </div>`);
         $('#userAnswerInput').val('');
+        processAfterEndingRecognitsation();
 
     }
 
@@ -101,9 +115,7 @@ const processAfterEndingRecognitsation=()=>{
             console.log("no submitted");
          }
         
-         $('#generateQts').html(' <i class="fa fa-spinner fa-spin"></i>Loading');
-         $('#startBtn').addClass('displayNone');
-         document.getElementById('mic').classList.remove('recording');
+         
 
 }
 
@@ -264,7 +276,8 @@ function  getDatatoEdit(event){
     receiveText.on('blur', function () {
         receiveText.attr('contenteditable', false);
         receiveText.removeAttr('style'); 
-        afterEditUpdateAnswer(question_id);
+        console.log(receiveText.text(),"this is user and question id ",question_id);
+        afterEditUpdateAnswer(receiveText.text(),question_id);
 
     });
     receiveText.on('keydown', function (e) {
@@ -275,9 +288,10 @@ function  getDatatoEdit(event){
     });
 }
 
-const afterEditUpdateAnswer =(question_id)
+const afterEditUpdateAnswer =(user_answer,question_id)=>
 {
 
+    let userEmail=$('#user_email').val();
     let url=`/updateAnswer`;
     let parameters={
         method:"POST",
@@ -286,6 +300,9 @@ const afterEditUpdateAnswer =(question_id)
         },
         body:JSON.stringify({
         "question_id": question_id,
+        'user_answer':user_answer,
+        'user_email':userEmail,
+
         })
     };
 

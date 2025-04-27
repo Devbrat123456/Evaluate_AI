@@ -22,7 +22,7 @@ const chatBoxController = {
             const {user_id,level_id,skill_id}=req.query;
         const existingRecord = await userModel.findOne({id:user_id});
         const skill = await skillModel.findOne({id:skill_id});
-        console.log(skill);
+        // console.log(skill);
         if (existingRecord.length ==0) {
 
             req.flash('error', 'No user Found Unauthorized entry ');
@@ -238,8 +238,8 @@ const chatBoxController = {
      },
      updateAnswer:async(req,res)=>{
           try{
-                const {user_id,question_id,user_answer}=req.body;
-                let status=CandidateResponsesModel.update({user_answer},`question_id=${question_id}`);
+                const {user_email,question_id,user_answer}=req.body;
+                let status=CandidateResponsesModel.updateOnMultipleCol({'ResponseText':user_answer},[{column:`QuestionId`,value:question_id},{column:'CandidateEmail',value:user_email}]);
                 return res.status(200).json(status);
           }
           catch(error){

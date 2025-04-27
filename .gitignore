@@ -381,3 +381,4 @@ dist
 package.json
 package-lock.json
 public/assets/audio/ElevenLabsNew.wav
+public/assets/audio/audioFile.json
