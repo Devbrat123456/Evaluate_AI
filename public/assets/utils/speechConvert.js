@@ -266,28 +266,26 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
 }
 
 function  getDatatoEdit(event){
-    let receiveText =$(event).closest('.sent').find('.receive-text');
+      let receiveText =$(event).closest('.sent').find('.receive-text');
     let question_id =$(event).attr('question_id');
-    receiveText.attr('contenteditable', true).focus();
-    receiveText.css({
-        border: '1px solid #ccc',
-        padding: '2px',
-        outline: 'none'
-    });
-    receiveText.on('blur', function () {
-        receiveText.attr('contenteditable', false);
-        receiveText.removeAttr('style'); 
-        
 
-    });
-    receiveText.on('keydown', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            receiveText.blur(); 
-            console.log(receiveText.text(),"this is user and question id ",question_id);
+     if($(event).hasClass("fa-save")){
+            $(event).removeClass('far fa-save');
+            $(event).addClass('fas fa-edit');
+            receiveText.attr('contenteditable', false);
+            receiveText.removeAttr('style'); 
             afterEditUpdateAnswer(receiveText.text(),question_id);
-        }
-    });
+     }else{
+            receiveText.attr('contenteditable', true).focus();
+            receiveText.css({
+            border: '1px solid #ccc',
+            padding: '2px',
+            outline: 'none'
+            });
+            $(event).removeClass('fas fa-edit');
+            $(event).addClass('far fa-save');
+     }
+
 }
 
 const afterEditUpdateAnswer =async(user_answer,question_id)=>

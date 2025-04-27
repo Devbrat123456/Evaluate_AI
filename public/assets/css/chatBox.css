@@ -246,7 +246,7 @@
 }
 
 
-input[type="text"] {
+#userAnswerInput {
 
     flex: 1;
 
@@ -254,12 +254,12 @@ input[type="text"] {
 
     border: none;
 
-    border-radius: 20px;
+    border-radius: 5px;
 
     background-color: white;
 
     font-size: 14px;
-
+ resize: none;
 }
 
 #SubmitAnswerButton{
