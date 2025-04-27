@@ -37,6 +37,7 @@ micButton.addEventListener('click', function(event) {
     recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript; // Get the speech result
         // document.getElementById('result').innerText = `You said: ${transcript}`;
+        console.log(`You said: ${transcript}`);
       
         $('#userAnswerInput').val(transcript);
        
@@ -276,35 +277,31 @@ function  getDatatoEdit(event){
     receiveText.on('blur', function () {
         receiveText.attr('contenteditable', false);
         receiveText.removeAttr('style'); 
-        console.log(receiveText.text(),"this is user and question id ",question_id);
-        afterEditUpdateAnswer(receiveText.text(),question_id);
+        
 
     });
     receiveText.on('keydown', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             receiveText.blur(); 
+            console.log(receiveText.text(),"this is user and question id ",question_id);
+            afterEditUpdateAnswer(receiveText.text(),question_id);
         }
     });
 }
 
-const afterEditUpdateAnswer =(user_answer,question_id)=>
+const afterEditUpdateAnswer =async(user_answer,question_id)=>
 {
 
+ console.log("fetch is called");
     let userEmail=$('#user_email').val();
-    let url=`/updateAnswer`;
-    let parameters={
-        method:"POST",
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body:JSON.stringify({
+
+      socket.emit('answerUpdate',{
         "question_id": question_id,
         'user_answer':user_answer,
         'user_email':userEmail,
 
-        })
-    };
+        }); 
 
 }
 

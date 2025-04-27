@@ -330,6 +330,18 @@ const convertTextToAudio=(text)=>{
 
 
 }
+
+ const updateUserAnswerOfQuestion =async(user_email,question_id,user_answer)=>{
+
+          try{
+            let status=await CandidateResponsesModel.updateOnMultipleCol({'ResponseText':user_answer},[{column:`QuestionId`,value:question_id},{column:'CandidateEmail',value:user_email}]);
+                // return res.status(200).json(status);
+                  console.log(status,"updating the answer");
+          }
+          catch(error){
+            console.log(error,"while updating Answer");
+          }
+ }
             io.on('connect',(socket)=>{
                   socket.on('text_file',(text)=>{
                         convertTextToAudio(text);
@@ -342,6 +354,12 @@ const convertTextToAudio=(text)=>{
                     }
                     socket.emit('json_file',data);
                   });
+
+                   socket.on('answerUpdate',async(response)=>{
+                     console.log('this is anser',response);
+                                updateUserAnswerOfQuestion(response.user_email,response.question_id,response.user_answer);
+
+                   })
              })
 
 

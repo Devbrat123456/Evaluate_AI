@@ -100,18 +100,10 @@ class CommonModel {
         const keys = Object.keys(data);
         const values = Object.values(data);
         const setClause = keys.map((key, index) => `${key} = @param${index}`).join(', ');
-        const query = `UPDATE ${this.#privateTableName} SET ${setClause} `;
+        let query = `UPDATE ${this.#privateTableName} SET ${setClause} `;
+        let whereClauses=[];
 
-        if (conditions.length > 0) {
-            conditions.forEach((condition, index) => {
-                const paramName = `cond${index}`;
-                whereClauses.push(`${condition.column} = @${paramName}`);
-                request.input(paramName, condition.value);
-            });
-            query += ` WHERE ` + whereClauses.join(" AND ");
-        }
-        console.log(query);
-
+       
 
         const transaction = new sql.Transaction();
         try {
@@ -122,6 +114,17 @@ class CommonModel {
             keys.forEach((key, index) => {
                 request.input(`param${index}`, values[index]);
             });
+
+                if (conditions.length > 0) {
+                    conditions.forEach((condition, index) => {
+                        const paramName = `cond${index}`;
+                        whereClauses.push(`${condition.column} = @${paramName}`);
+                        request.input(paramName, condition.value);
+                    });
+                    query += ` WHERE ` + whereClauses.join(" AND ");
+                }
+        console.log(query);
+
 
             const result = await request.query(query);
 
