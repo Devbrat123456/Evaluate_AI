@@ -3,99 +3,88 @@
 
   <div class="avatar-container row" >
     <audio id="audioPlay" src="/assets/audio/ElevenLabsNew.wav"></audio>
-      <div class="col-md-6" style="overflow:hidden">
-          <div class="threeContainer" id="threeContainer" >
+    <div class="col-md-6" style="overflow:hidden">
+        <div class="threeContainer" id="threeContainer" >
 
-         </div>
+       </div>
+    </div>
+    <div class="col-md-6 whatsapp-container">
+        <div class="whatsapp-chat-container">
+          <div class="chat-messages">
+             
+              <!-- Sent Message -->
+          </div>
+
+          <div class="chat-input">
+
+              <button class="btn btn-sm btn-success buttonload" id="generateQts"> <i class="fa fa-spinner fa-spin"></i>Loading</button>
+               <textarea type="text" placeholder="Type a message" id="userAnswerInput"> </textarea>
+               <label id="SubmitAnswerButton" onclick="onUserSumbmitAnswer()"> <i class="fa fa-paper-plane" aria-hidden="true"></i> </label>
+              <input type="hidden" id="question_id" >
+              <input type="hidden" id="user_answer" >
+              <input type="hidden" id="user_id" value="<%-user.id %>">
+              <input type="hidden" id="level_id" value="<%-level_id %>">
+              <input type="hidden" id="topic" value="<%-skill.category %>">
+              <input type="hidden" id="skill_id_of_user" value="<%-level_id %>">
+              <input type="hidden" id="user_name" value="<%-user.NAME %>">
+              <input type="hidden" id="user_email" value="<%-user.EMAIL %>">
+              <button class="send-button displayNone" id="startBtn" title="Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+     <div class="col-md-12">
+     <video id="videoStreaming" autoplay playsinline muted controls="false"/></video>
       </div>
-      <div class="col-md-6 whatsapp-container">
-
-    <div class="whatsapp-chat-container">
-       
-    <div class="chat-messages">
-       
-        <!-- Sent Message -->
-    </div>
-
-    <!-- Chat Input -->
-
-    <div class="chat-input">
-
-        <button class="btn btn-sm btn-success buttonload" id="generateQts"> <i class="fa fa-spinner fa-spin"></i>Loading</button>
-         <textarea type="text" placeholder="Type a message" id="userAnswerInput"> </textarea>
-         <label id="SubmitAnswerButton" onclick="onUserSumbmitAnswer()"> <i class="fa fa-paper-plane" aria-hidden="true"></i> </label>
-        <input type="hidden" id="question_id" >
-        <input type="hidden" id="user_answer" >
-        <input type="hidden" id="user_id" value="<%-user.id %>">
-        <input type="hidden" id="level_id" value="<%-level_id %>">
-        <input type="hidden" id="topic" value="<%-skill.category %>">
-        <input type="hidden" id="skill_id_of_user" value="<%-level_id %>">
-        <input type="hidden" id="user_name" value="<%-user.NAME %>">
-        <input type="hidden" id="user_email" value="<%-user.EMAIL %>">
-        <button class="send-button displayNone" id="startBtn" title="Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
-
-    </div>
-
-</div>
-    </div>
-</div>
+  </div>
 
 
    
-<script   src="/assets/js/gsap.min.js"></script>
- // <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+<script src="/assets/js/gsap.min.js"></script>
+<script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript">
-    var socket = io();
-</script>
-<%# <script src="https://aka.ms/csspeech/jsbrowserpackageraw"></script> %>
+<script type="text/javascript">var socket = io();</script>
 <script type="module"   src="/assets/utils/main.js"></script>
-<script   src="/assets/utils/speechConvert.js"></script>
- <script   type="text/javascript">
-     
- window.onload=()=>{
-        let name ="<%-user.NAME %>"
-        let email ="<%-user.EMAIL %>"
-        let user_id ="<%-user.id %>"
-        let speakingText=`Hey Welcome ${name}, How are You?`;
-        // let speakingText=`The system generated API ID 9152 after the bid approval, but in the "Pending Lot View," API ID 7907 is displayed. Kindly investigate and correct this and let us know the reason also for the discrepancy.`;
-        // setTimeout(,1000);
-        let level_id="<%-level_id %>";
-        let skill="<%-skill.category %>";
-        console.log(skill,level_id,email);
+<script src="/assets/utils/speechConvert.js"></script>
+<script src="/assets/utils/videoRecorder.js"></script>
+<script type="text/javascript"> 
+     window.onload=()=>{
+            let name ="<%-user.NAME %>"
+            let email ="<%-user.EMAIL %>"
+            let user_id ="<%-user.id %>";
+            let level_id="<%-level_id %>";
+            let skill="<%-skill.category %>";
+            getQuestion(skill,level_id,email,user_id);
+            openModalForLogin();
+    };
 
-      //    if(skill&&level_id && email)
-        getQuestion(skill,level_id,email,user_id);
-        openModalForLogin();
+</script>
 
-};
+<script>
+      const modal = document.querySelector(".modal");
+      const modalButton = document.querySelector(".modal-button");
+      const closeButton = document.querySelector(".close-button");
+      const scrollDown = document.querySelector(".scroll-down");
+      let isOpened = false;
+      const openModalForLogin = () => {
+        modal.classList.add("is-open");
+      };
 
- </script>
+      const openModalForAlert = () => {
+        modal.classList.add("is-open");
+      };
 
- <script>
-const modal = document.querySelector(".modal");
-const modalButton = document.querySelector(".modal-button");
-const closeButton = document.querySelector(".close-button");
-const scrollDown = document.querySelector(".scroll-down");
-let isOpened = false;
-const openModalForLogin = () => {
-  modal.classList.add("is-open");
-};
+      const closeModal = () => {
+        modal.classList.remove("is-open");
+      };
 
-const openModalForAlert = () => {
-  modal.classList.add("is-open");
-};
+      // modalButton.addEventListener("click", openModalForLogin);
+      // closeButton.addEventListener("click", closeModal);
 
-const closeModal = () => {
-  modal.classList.remove("is-open");
-};
-
-// modalButton.addEventListener("click", openModalForLogin);
-// closeButton.addEventListener("click", closeModal);
-
-document.onkeydown = evt => {
-  evt = evt || window.event;
-  evt.keyCode === 27 ? closeModal() : false;
-};
- </script>
+      document.onkeydown = evt => {
+        evt = evt || window.event;
+        evt.keyCode === 27 ? closeModal() : false;
+      };
+</script>
 <%- include('../includes/footer') %>
