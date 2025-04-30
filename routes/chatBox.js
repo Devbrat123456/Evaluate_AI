@@ -26,6 +26,7 @@ router.post('/storeAnswer', chatBoxController.storeAnswer);
 router.post('/getQuestion', chatBoxController.getQuestion);
 router.post('/generateResult', chatBoxController.generateResult);
 router.post('/updateAnswer', chatBoxController.updateAnswer);
+router.post('/uploadRecording',upload.single('interviewVideo'),chatBoxController.uploadRecording);
 
 
 module.exports = router

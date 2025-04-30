@@ -290,8 +290,6 @@ function  getDatatoEdit(event){
 
 const afterEditUpdateAnswer =async(user_answer,question_id)=>
 {
-
- console.log("fetch is called");
     let userEmail=$('#user_email').val();
 
       socket.emit('answerUpdate',{
@@ -299,7 +297,7 @@ const afterEditUpdateAnswer =async(user_answer,question_id)=>
         'user_answer':user_answer,
         'user_email':userEmail,
 
-        }); 
+    }); 
 
 }
 

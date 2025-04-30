@@ -259,7 +259,16 @@ const chatBoxController = {
              let question=await questionModel.buildDynamicQueryJoin(['questions'],['questions.question','questions.expected_answer','questions.user_answer','questions.email','questions.level','questions.topic'],[],[{column:'is_correct',value:1},{column:'user_id',value:user_id},{column:'level',value:level_id},{column:'topic',value:topic}]);
              // res.render(`${module_path}/result`,)
         
+     },
+     uploadRecording:async(req,res)=>{
+           try{
+             return res.status(200).json({message:"Good"});
 
+           }
+           catch(error)
+           {
+             return res.status(500).json({message:error||"Something wrong"});
+           }
      }
 
 }
