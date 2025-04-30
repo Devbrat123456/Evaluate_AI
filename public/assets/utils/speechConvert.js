@@ -146,7 +146,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
                 let input =data.followup_question.question;
                 if (input) {
 
-                       $('#question_id').val(data.followup_question.question_id);
+                       $('#question_id').val(data.FollowupID);
                         getAudioFile(input);
                 } else {
                   console.log("No match found.");

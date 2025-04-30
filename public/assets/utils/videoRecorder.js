@@ -20,4 +20,4 @@ try {
             console.error('Error accessing media devices.', error);
         }
  }
- startVideoStreaming();
+ // startVideoStreaming();
