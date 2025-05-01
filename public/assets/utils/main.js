@@ -16,8 +16,8 @@ const clock = new THREE.Clock();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth / 2, window.innerHeight);
-camera.aspect = (window.innerWidth / 2) / window.innerHeight;
+renderer.setSize(window.innerWidth / 3, window.innerHeight);
+camera.aspect = (window.innerWidth / 3) / window.innerHeight;
 camera.updateProjectionMatrix();
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setAnimationLoop(animate);
