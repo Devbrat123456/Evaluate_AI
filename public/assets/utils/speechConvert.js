@@ -57,7 +57,7 @@ micButton.addEventListener('click', function(event) {
 
 }
 
-
+var calledNoOfQuestion=1;
 
   const onUserSumbmitAnswer =()=>{
         let transcript =  $('#userAnswerInput').val();
@@ -139,11 +139,19 @@ const submitResponse=async(emailid,question_id,answer)=>{
      try{
         let response = await fetch(url,parameters);
         data = await response.json();
+
+           if(calledNoOfQuestion==6)
+           {
+                 if(confirmationToEndSession())
+                 {
+                     return true;
+                 }
+           }
             if(data.followup_question)
             {
                 $('#startBtn').removeClass('displayNone');
                 calledNoOfQuestion++;
-                let input =data.followup_question.question;
+                let input =data.followup_question;
                 if (input) {
 
                        $('#question_id').val(data.FollowupID);
@@ -186,18 +194,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
      }
 }
 
-let calledNoOfQuestion=1;
-const toSubmitAnswer=()=>{
-     if(calledNoOfQuestion==5)
-     {
-            $('.modal-left').html(`<p> Want to Submit ? </p> 
-        <div class="modal-buttons">
-            <button class="input-button " form_id="lawyerLogin" onclick="submitForm()">End</button>
-            <button class="input-button "  onclick="closeModal()">Close</button>
-        </div>
-        `);
-     }
-}
+
 let erroHandlingCalledQuestion=1;
 
 const getQuestion= async(topic,difficulty,emailid,user_id)=>{
@@ -245,7 +242,7 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
                         getAudioFile(input);
                         console.log(input,"also fetching audio file");
                 } else {
-                  console.log("No match found.");
+                  messagePop("No match found.",'error');
                 }
                 erroHandlingCalledQuestion=1;
             }else if(data.message){
@@ -291,13 +288,44 @@ function  getDatatoEdit(event){
 const afterEditUpdateAnswer =async(user_answer,question_id)=>
 {
     let userEmail=$('#user_email').val();
-
       socket.emit('answerUpdate',{
         "question_id": question_id,
         'user_answer':user_answer,
         'user_email':userEmail,
-
     }); 
-
 }
 
+
+const FiveQuestionCalledPostAction=()=>{
+     let htmlMessage=`<p>Your Responses Has been Received .Please Wait For Result , once Evaluated you will be informed </p>`;
+     $('.chat-input').html(htmlMessage);
+}
+
+
+const confirmationToEndSession=()=>{
+     if(calledNoOfQuestion==6)
+     {     
+        Swal.fire({
+        title: 'Are you sure to End The Session Once Submitted you cannot change you answer?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, do it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+
+                 FiveQuestionCalledPostAction();
+                 return true;
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    return false;
+            }
+        });
+
+     }else{
+        console.log("no of question called 5");
+     }
+    return false;
+
+}
