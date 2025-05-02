@@ -274,6 +274,7 @@ function getAudioFile(speakingText) {
 }
 let getJsonFileCount=1;
 socket.on('json_file',(jsonFile)=>{
+
        if(getJsonFileCount==1)
         $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
     else
@@ -283,7 +284,6 @@ socket.on('json_file',(jsonFile)=>{
  }) 
 socket.on('audioPath',(audioPath)=>{
      //  first i have got updated audio now i will get audio json file 
-        console.log(audioPath,"this is audio file");
          socket.emit('get_json_file',audioPath);
  }) 
 window.getAudioFile = getAudioFile;

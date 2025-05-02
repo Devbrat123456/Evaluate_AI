@@ -9,7 +9,7 @@ const readline = require("readline");
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require('child_process');
-const { getJsonFile, runRhubarbCommand } = require('../../config/utils/helper');
+const { getJsonFile, runRhubarbCommand,currentTimeStamp } = require('../../config/utils/helper');
 const {AssemblyAI} =require('assemblyai');
 const {getIo}= require('../../config/socket');
 const io = getIo();
@@ -275,7 +275,8 @@ const chatBoxController = {
 
 
 const convertTextToAudio=(text)=>{
-     const audioFile = path.join(__dirname, "../../public/assets/audio/ElevenLabsNew.wav");
+         let uqId=currentTimeStamp();
+     const audioFile = path.join(__dirname, `../../public/assets/audio/ElevenLabsNew${uqId}.wav`);
         const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
         const audioConfig = sdk.AudioConfig.fromAudioFileOutput(audioFile);
         speechConfig.speechSynthesisVoiceName = "en-US-AvaMultilingualNeural";
@@ -284,6 +285,7 @@ const convertTextToAudio=(text)=>{
                         
             let lastOffset = 0;
             let audioFileJson = { mouthCues: [] };
+           
 
             synthesizer.visemeReceived = function (s, e) {
                 let currentOffset = e.audioOffset / 10000; // Convert to milliseconds
@@ -308,13 +310,14 @@ const convertTextToAudio=(text)=>{
         synthesizer.speakTextAsync(text,
             async function(result) {
                     if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
-                         const jsonFilePath = path.join(__dirname, "../../public/assets/audio/audioFile.json");
+                         const jsonFilePath = path.join(__dirname, `../../public/assets/audio/audioFile${uqId}.json`);
                          fs.writeFileSync(jsonFilePath, JSON.stringify(audioFileJson, null, 2));
                         synthesizer.close();
                         synthesizer = null;
                         let data ={
-                            audipath:'/assets/audio/ElevenLabsNew.wav',
-                            speakingText:text
+                            audipath:`/assets/audio/ElevenLabsNew${uqId}.wav`,
+                            speakingText:text,
+                            uqId
                         }
                         io.emit('audioPath',data);
 
@@ -356,7 +359,8 @@ const convertTextToAudio=(text)=>{
                         convertTextToAudio(text);
                   });
                    socket.on('get_json_file',async(audioPath)=>{
-                    const audioJsonFile = await getJsonFile();
+                    let {uqId,audipath}=audioPath;
+                    const audioJsonFile = await getJsonFile(uqId);
                     let data= {
                         'jsonFile':audioJsonFile,
                         'audioPath':audioPath

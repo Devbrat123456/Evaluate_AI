@@ -34,6 +34,16 @@ const getDatetime = () => {
     let seconds = String(currentTime.getSeconds()).padStart(2, '0');
     return `${year}-${month}-${date} ${hours}:${minute}:${seconds}`;
 }
+const currentTimeStamp =()=>{
+      let currentTime = new Date();
+    let year = currentTime.getFullYear();
+    let month = String(currentTime.getMonth() + 1).padStart(2, '0');
+    let date = String(currentTime.getDate()).padStart(2, '0');
+    let hours = String(currentTime.getHours()).padStart(2, '0');
+    let minute = String(currentTime.getMinutes()).padStart(2, '0');
+    let seconds = String(currentTime.getSeconds()).padStart(2, '0');
+    return `${year}${month}${date}${hours}${minute}${seconds}`;
+}
 
 const getDate = () => {
     let currentTime = new Date();
@@ -50,8 +60,8 @@ const isAjax = (req) => {
 }
 
 
-const getJsonFile = async () => {
-    const jsonFilePath = path.join(__dirname, '../../public/assets/audio/audioFile.json');
+const getJsonFile = async (id) => {
+    const jsonFilePath = path.join(__dirname, `../../public/assets/audio/audioFile${id}.json`);
     try {
         const jsonData = await fs.readFile(jsonFilePath, 'utf8');
 
@@ -172,4 +182,4 @@ function processPhonemes(output, duration = 20) {
 // Run the function
 
 
-module.exports = { getDatetime, getDate, encryptId, decryptId, EducationType, isAjax, getJsonFile, runRhubarbCommand,getPhonemes }
+module.exports = { getDatetime, getDate, encryptId, decryptId, EducationType, isAjax, getJsonFile, runRhubarbCommand,getPhonemes ,currentTimeStamp}

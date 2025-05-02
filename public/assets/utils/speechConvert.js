@@ -299,6 +299,7 @@ const afterEditUpdateAnswer =async(user_answer,question_id)=>
 const FiveQuestionCalledPostAction=()=>{
      let htmlMessage=`<p>Your Responses Has been Received .Please Wait For Result , once Evaluated you will be informed </p>`;
      $('.chat-input').html(htmlMessage);
+     getResultOfQuestion();
 }
 
 
@@ -328,4 +329,68 @@ const confirmationToEndSession=()=>{
      }
     return false;
 
+}
+
+
+const getResultOfQuestion =async()=>{
+
+    let getAllQuestionAnswer=document.getElementsByClassName('receive-text');
+
+    // Array.from(getAllQuestionAnswer).forEach((element)=>{
+    //         let question_id =$(element).attr('question_id');
+    //         let answer =$(element).text();
+    //          evaluateAnswerApi(question,answer);
+
+    // })
+    /*
+     in foreach loop ,you are sending the request to get data , immediately for all question but in this case there is no assurity of getting response immediately some may get late response no fixed time , 
+    //  if you wish to execute  ,loop  second loop to execute only aftet first question evalution completion thhen use for of loop , not foreach , then use await keyword for all calling evaluateAnswerApi;  instead of using this way  now you can use new way promise.all  it will do the same thing but it is more fast then conventional way , 
+
+
+   Promise.all() is a method in JavaScript used to run multiple asynchronous operations (promises) in parallel and wait for all of them to complete.
+
+
+    why not use foreach because
+    Just executes a function for each element.
+
+    Doesn't return anything (returns undefined). because it takes callback function in parameter , which let does not return anything .
+
+    So you can't use it to collect returned values (e.g., Promises).
+map:
+Executes a function for each element, and returns an array of the results.
+
+Perfect for when each function returns a Promise, and you want to use Promise.all():
+*/
+     /* first collect all promises */
+   const allPromises=  Array.from(getAllQuestionAnswer).map((element)=>{
+        let question=$(element).attr('question_id');
+        let answer=$(element).text();
+        console.log(question,answer,"this is answerUpdate");
+        return evaluateAnswerApi(question,answer);
+     });
+   console.log(allPromises);
+
+   const getResultAfterEvaluation = await Promise.all(allPromises);    // waiting for all promises to be resolved 
+                 displayTheResult(getResultAfterEvaluation);
+}
+
+const evaluateAnswerApi= async(question,answer)=>{
+
+    let url=`https://evalaiapiv2-gygqaffwdvc7e0h2.northeurope-01.azurewebsites.net/evaluate_response/`;
+    let parameters={
+        method:"POST",
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({question,answer})
+    };
+
+    let response = await fetch(url,parameters);
+    let data = response.json();
+     return data;       // returning promises;
+}
+
+
+const displayTheResult =(result)=>{
+     console.log(result,"this is result");
 }
