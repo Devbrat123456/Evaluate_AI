@@ -13,7 +13,6 @@ let isRecognizing = false;
     recognition.lang = 'en-US'; // Set the language to English
     
 const micButton = document.getElementById('startBtn'); // or stopBtn initially
-let isRecognizing = false;
 
 micButton.addEventListener('click', function(event) {
     if (!isRecognizing) {
@@ -189,7 +188,12 @@ const submitResponse=async(emailid,question_id,answer)=>{
         if (erroHandlingCalledQuestion < 4) {
         $('#generateQts').html(data.message);
         erroHandlingCalledQuestion++;  // increment first
+        await new Promise(resolve => setTimeout(resolve, 1000 * erroHandlingCalledQuestion));
+
         return submitResponse(emailid, question_id, answer);
+        }else{
+
+             $('#generateQts').html("Something went wrong. Please try again later.");
         }
      }
 }
