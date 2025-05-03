@@ -198,7 +198,6 @@ const submitResponse=async(emailid,question_id,answer)=>{
      }
 }
 
-
 let erroHandlingCalledQuestion=1;
 
 const getQuestion= async(topic,difficulty,emailid,user_id)=>{
