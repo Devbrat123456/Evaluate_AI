@@ -14,7 +14,6 @@ const jwtSecret = process.env.JWT_SECRET_TOKEN;
 const jwtExpiry = process.env.JWTEXPIRY;
 const bcrypt = require("bcrypt");
 
-
 const cookieOptions = {
     httpOnly: true,        // Cookie not accessible via JavaScript
     secure: false,         // Set to true in production (requires HTTPS)
