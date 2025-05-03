@@ -377,9 +377,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-.env
-package.json
-package-lock.json
 public/assets/audio/ElevenLabsNew.wav
+.env
 /public/assets/audio/
 public/assets/audio/audioFile.json
