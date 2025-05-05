@@ -1,60 +1,60 @@
 
 
-let isRecognizing = false;
+// let isRecognizing = false;
 
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
-} else {
-    // Create a new instance of SpeechRecognition
-    const recognition = new webkitSpeechRecognition();
+//   if (!('webkitSpeechRecognition' in window)) {
+//     alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
+// } else {
+//     // Create a new instance of SpeechRecognition
+//     const recognition = new webkitSpeechRecognition();
 
-    recognition.continuous = true; // Capture only one result
-    recognition.interimResults = true; // Get the final result, not partial results
-    recognition.lang = 'en-US'; // Set the language to English
+//     recognition.continuous = true; // Capture only one result
+//     recognition.interimResults = true; // Get the final result, not partial results
+//     recognition.lang = 'en-US'; // Set the language to English
     
-const micButton = document.getElementById('startBtn'); // or stopBtn initially
+// const micButton = document.getElementById('startBtn'); // or stopBtn initially
 
-micButton.addEventListener('click', function(event) {
-    if (!isRecognizing) {
-        recognition.start();
-        isRecognizing = true;
-        console.log("starting the mic");
-        micButton.id = 'stopbtn';
-        document.getElementById('mic').classList.add('recording');
-    } else {
-        micButton.id = 'startBtn';
-        recognition.stop();
-        isRecognizing = false;
-        console.log("stopping the mic");
-        // document.getElementById('mic').classList.remove('recording');
-    }
-});
+// micButton.addEventListener('click', function(event) {
+//     if (!isRecognizing) {
+//         recognition.start();
+//         isRecognizing = true;
+//         console.log("starting the mic");
+//         micButton.id = 'stopbtn';
+//         document.getElementById('mic').classList.add('recording');
+//     } else {
+//         micButton.id = 'startBtn';
+//         recognition.stop();
+//         isRecognizing = false;
+//         console.log("stopping the mic");
+//         // document.getElementById('mic').classList.remove('recording');
+//     }
+// });
 
 
-    // Handle the result when speech is detected
+//     // Handle the result when speech is detected
 
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript; // Get the speech result
-        // document.getElementById('result').innerText = `You said: ${transcript}`;
-        console.log(`You said: ${transcript}`);
+//     recognition.onresult = (event) => {
+//         const transcript = event.results[0][0].transcript; // Get the speech result
+//         // document.getElementById('result').innerText = `You said: ${transcript}`;
+//         console.log(`You said: ${transcript}`);
       
-        $('#userAnswerInput').val(transcript);
+//         $('#userAnswerInput').val(transcript);
        
-    };
+//     };
 
-    recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-    };
-    recognition.onstart = () => {
-        console.log('Speech recognition started');
-    };
-    recognition.onend = () => {
-        $('#generateQts').html(' <i class="fa fa-spinner fa-spin"></i>Loading');
-         $('#startBtn').addClass('displayNone');
-         document.getElementById('mic').classList.remove('recording');
-    };
+//     recognition.onerror = (event) => {
+//         console.error('Speech recognition error:', event.error);
+//     };
+//     recognition.onstart = () => {
+//         console.log('Speech recognition started');
+//     };
+//     recognition.onend = () => {
+//         $('#generateQts').html(' <i class="fa fa-spinner fa-spin"></i>Loading');
+//          $('#startBtn').addClass('displayNone');
+//          document.getElementById('mic').classList.remove('recording');
+//     };
 
-}
+// }
 
 var calledNoOfQuestion=1;
 

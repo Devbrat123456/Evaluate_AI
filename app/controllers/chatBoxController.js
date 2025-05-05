@@ -343,37 +343,97 @@ const convertTextToAudio=(text)=>{
 
 }
 
- const updateUserAnswerOfQuestion =async(user_email,question_id,user_answer)=>{
+const updateUserAnswerOfQuestion =async(user_email,question_id,user_answer)=>{
 
-          try{
-            let status=await CandidateResponsesModel.updateOnMultipleCol({'ResponseText':user_answer},[{column:`QuestionId`,value:question_id},{column:'CandidateEmail',value:user_email}]);
-                // return res.status(200).json(status);
-                  console.log(status,"updating the answer");
-          }
-          catch(error){
-            console.log(error,"while updating Answer");
-          }
- }
-            io.on('connect',(socket)=>{
-                  socket.on('text_file',(text)=>{
-                        convertTextToAudio(text);
-                  });
-                   socket.on('get_json_file',async(audioPath)=>{
-                    let {uqId,audipath}=audioPath;
-                    const audioJsonFile = await getJsonFile(uqId);
-                    let data= {
-                        'jsonFile':audioJsonFile,
-                        'audioPath':audioPath
-                    }
-                    socket.emit('json_file',data);
-                  });
+  try{
+    let status=await CandidateResponsesModel.updateOnMultipleCol({'ResponseText':user_answer},[{column:`QuestionId`,value:question_id},{column:'CandidateEmail',value:user_email}]);
+        // return res.status(200).json(status);
+          console.log(status,"updating the answer");
+  }
+  catch(error){
+    console.log(error,"while updating Answer");
+  }
+}
 
-                   socket.on('answerUpdate',async(response)=>{
-                     console.log('this is anser',response);
-                                updateUserAnswerOfQuestion(response.user_email,response.question_id,response.user_answer);
 
-                   })
-             })
+let speechRecognizer;
+let pushStream;
+
+function initSpeechRecognizer() {
+    const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
+    speechConfig.speechRecognitionLanguage = "en-US";
+
+    pushStream = sdk.AudioInputStream.createPushStream();
+    const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
+    speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+    speechRecognizer.recognizing = (s, e) => {
+        // console.log("emitting");
+        // console.log("INTERIM:", e.result.text);
+        io.emit("sttinterim", e.result.text);
+    };
+
+    speechRecognizer.recognized = (s, e) => {
+        if (e.result.reason === sdk.ResultReason.RecognizedSpeech) {
+            // console.log("emitting");
+            // console.log("FINAL:", e.result.text);
+            io.emit("sttfinal", e.result.text);
+        }
+    };
+
+    speechRecognizer.canceled = (s, e) => {
+        console.log("CANCELED:", e.reason);
+        if (e.reason === sdk.CancellationReason.Error) {
+            console.log("Error:", e.errorDetails);
+        }
+    };
+
+    speechRecognizer.startContinuousRecognitionAsync();
+}
+
+io.on('connect',(socket)=>{
+       initSpeechRecognizer();
+      socket.on('text_file',(text)=>{
+            convertTextToAudio(text);
+      });
+       socket.on('get_json_file',async(audioPath)=>{
+        let {uqId,audipath}=audioPath;
+        const audioJsonFile = await getJsonFile(uqId);
+            let data= {
+                'jsonFile':audioJsonFile,
+                'audioPath':audioPath
+            }
+        socket.emit('json_file',data);
+      });
+
+       socket.on('answerUpdate',async(response)=>{
+            updateUserAnswerOfQuestion(response.user_email,response.question_id,response.user_answer);
+
+       })
+
+       socket.on('gettingAudio',async(buffer)=>{
+
+                if (pushStream) {
+                    pushStream.write(Buffer.from(buffer)); // write all chunks
+                }
+
+       })
+
+        socket.on('endStream', () => {
+            if (pushStream) {
+                pushStream.close();
+            }
+            if (speechRecognizer) {
+                speechRecognizer.stopContinuousRecognitionAsync(() => {
+                    console.log("Recognition stopped.");
+                });
+            }
+        });
+ })
+
+
+
+
 
 
 module.exports = chatBoxController;

@@ -1,9 +1,23 @@
 
-    document.getElementById("startBtn").addEventListener("click", () => {
-     
-       takingInputFromUser();
-    });
- 
+const micButton = document.getElementById('startBtn'); // or stopBtn initially
+let isRecognizing = false;
+micButton.addEventListener('click', function(event) {
+    if (!isRecognizing) {
+        // startRecording();
+        takingInputFromUser();
+        isRecognizing = true;
+        console.log("starting the mic");
+        micButton.id = 'stopbtn';
+        document.getElementById('mic').classList.add('recording');
+    } else {
+        micButton.id = 'startBtn';
+        isRecognizing = false;
+        stopRecordingAudio();
+        console.log("stopping the mic");
+        document.getElementById('mic').classList.remove('recording');
+    }
+});
+
    const speechToText= async (pathforAudioFile)=>
    {
 
@@ -39,50 +53,63 @@
             messagePop(error.message, 'error');
         }
     }
-
- // var socket = new io.Socket();
-    var socket = io();
-
-        // connection with server
-        // socket.on('connect', function () {
-        //     console.log('Connected to Server');
-        //      // takingInputFromUser();
-        // });
-        // console.log(socket);
-
-// socket.connect(window.location.origin); 
   var mediaRecorder;
+  let recorder;
      const takingInputFromUser = async()=>
      {
-         var audioChunks = [];
-         var constraints = { audio: true, video: false };
-        navigator.mediaDevices.getUserMedia(constraints).then(function (stream)
-        {
+        
+            try {
+            // Check if the MediaRecorder already exists and is recording
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                 console.log("MediaRecorder is already active. Continuing to send audio.");
+                 return; // Do not start a new recording if it's already active
+            }
 
-                 
-                var audio = document.getElementById('audioCapture');
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.start();
-                mediaRecorder.ondataavailable = function (event) {
-                if (event.data.size > 0) {
-                 audioChunks.push(event.data);
-                }
-                };
+            // // Get audio stream
+            // const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                mediaRecorder.onstop = async function () {
-                    var audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    const wavBlob = await convertToWav(audioBlob);
-                    var audioUrl = URL.createObjectURL(wavBlob);
-                    audio.src = audioUrl;
-                    audio.play();
-                    speechToText(audioUrl);
-               };
+            // // Create a MediaRecorder instance for the stream
+            // mediaRecorder = new MediaRecorder(stream);
 
-             document.getElementById('stopRecording').addEventListener('click', function () {
-                mediaRecorder.stop();
-                console.log("Recording stopped...");
-             });
-        })
+            // // Handle the audio data as it becomes available
+            // mediaRecorder.ondataavailable = function(event) {
+            //     if (event.data.size > 0) {
+            //             event.data.arrayBuffer().then(buffer => {
+            //             console.log("Emitting audio data...");
+
+            //             // Emit the audio data to the WebSocket server
+            //             socket.emit('gettingAudio', buffer);
+            //             }); 
+            //     }
+            // };
+
+            // // Start recording and send audio data every 250ms
+            // mediaRecorder.start(250);
+            // console.log("Recording started...");
+
+
+
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                  recorder = RecordRTC(stream, {
+                    type: 'audio',
+                    mimeType: 'audio/wav',
+                    recorderType: StereoAudioRecorder,
+                    desiredSampRate: 16000, // match Whisper / Azure
+                    numberOfAudioChannels: 1,
+                    timeSlice: 1000, // send every 1 sec
+                    ondataavailable: function(blob) {
+                      blob.arrayBuffer().then(buffer => {
+                        socket.emit('gettingAudio', buffer); // send raw WAV buffer
+                      });
+                    }
+                  });
+
+                  recorder.startRecording();    
+                });
+
+            } catch (error) {
+            console.error("Error starting recording:", error);
+            }
     }
 
      async function convertToWav(audioBlob) {
@@ -131,39 +158,59 @@
 
 
 
-    //   if (!('webkitSpeechRecognition' in window)) {
-    //     alert("Your browser doesn't support the Web Speech API. Please use Chrome or Edge.");
-    // } else {
-    //     // Create a new instance of SpeechRecognition
-    //     const recognition = new webkitSpeechRecognition();
+let stream;
+async function startRecording() {
+  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    //     // Set properties
-    //     recognition.continuous = false; // Capture only one result
-    //     recognition.interimResults = false; // Get the final result, not partial results
-    //     recognition.lang = 'en-US'; // Set the language to English
+  recorder = RecordRTC(stream, {
+    type: 'audio',
+    mimeType: 'audio/wav', // or 'audio/webm'
+    recorderType: StereoAudioRecorder, // enables WAV
+    numberOfAudioChannels: 1,
+    desiredSampRate: 16000 // good for STT
+  });
 
-    //     // Start button click event
-    //     document.getElementById('startBtn').onclick = () => {
-    //         recognition.start(); // Start listening
-    //     };
+  recorder.startRecording();
+  console.log('Recording started...');
+}
 
-    //     // Handle the result when speech is detected
-    //     recognition.onresult = (event) => {
-    //         const transcript = event.results[0][0].transcript; // Get the speech result
-    //         // document.getElementById('result').innerText = `You said: ${transcript}`;
-    //         console.log(`You said: ${transcript}`);
-    //     };
 
-    //     recognition.onerror = (event) => {
-    //         console.error('Speech recognition error:', event.error);
-    //     };
+async function stopRecordingAudio() {
 
-    //     recognition.onstart = () => {
-    //         console.log('Speech recognition started');
-    //     };
-    //     recognition.onend = () => {
-    //         console.log('Speech recognition ended');
-    //     };
-    // }
-    
-    </script>
+     // mediaRecorder.stop();
+  await recorder.stopRecording(() => {
+    const audioBlob = recorder.getBlob();
+    console.log('Recording stopped, sending to STT...');
+  //   speechToText(audioBlob);
+   });
+}
+
+function sendToSTT(audioBlob) {
+  const formData = new FormData();
+  formData.append("file", audioBlob, "audio.wav");
+        try
+        {
+            $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+            });
+             $.ajax({
+                   url : '/ChatBox/speechToText',
+                   type : 'POST',
+                   data : formData,
+                   processData: false,  
+                   contentType: false, 
+                   success : function(data) {
+                        const audio = new Audio(data.audioPath);
+                        audio.play();
+                      
+                   }
+            });
+      
+        } catch (error) {
+            messagePop(error.message, 'error');
+        }
+
+}
+
