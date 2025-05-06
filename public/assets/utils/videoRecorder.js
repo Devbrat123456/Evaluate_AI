@@ -90,5 +90,5 @@ const downloadVideo=(url)=>{
  }
 
 
-// setTimeout(stopRecording,10000);
- // startVideoStreaming();
+setTimeout(stopRecording,10000);
+ startVideoStreaming();

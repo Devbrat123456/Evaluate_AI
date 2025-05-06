@@ -13,11 +13,14 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.117.1/exampl
 
 const scene = new THREE.Scene();
 const clock = new THREE.Clock();
+const height=window.innerHeight/2;
+const width=window.innerWidth /3;
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth / 3, window.innerHeight);
-camera.aspect = (window.innerWidth / 3) / window.innerHeight;
+
+renderer.setSize(width, height);
+camera.aspect = (width) / height;
 camera.updateProjectionMatrix();
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setAnimationLoop(animate);
@@ -289,12 +292,12 @@ socket.on('audioPath',(audioPath)=>{
 
 socket.on('sttinterim',(text)=>{
      $('#userAnswerInput').val(text);
-     console.log("thi is text i am getting ",text);
+     // console.log("thi is text i am getting ",text);
 })
 
 socket.on('sttfinal',(text)=>{
      $('#userAnswerInput').val(text);
-     console.log("thi is text i am getting ",text);
+     // console.log("thi is text i am getting ",text);
 })
  
 window.getAudioFile = getAudioFile;

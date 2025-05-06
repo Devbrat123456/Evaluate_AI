@@ -17,8 +17,13 @@
     padding: 0px;
 }
 .threeContainer{
-     height: 89vh;
-     width: 30vh;
+     height: 55%;
+     padding: 0px;
+/*     width: 30vh;*/
+}
+#videoStreaming{
+    width:100%;
+    margin-left:10px;
 }
 .threeContainer canvas{
     width: 100%;
