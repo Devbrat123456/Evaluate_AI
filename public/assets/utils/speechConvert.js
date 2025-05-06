@@ -61,7 +61,9 @@ var calledNoOfQuestion=1;
   const onUserSumbmitAnswer =()=>{
         let transcript =  $('#userAnswerInput').val();
         let question_id =  $('#question_id').val();
-         if(transcript)
+
+        // console.log("what you are submiting ",transcript,question_id);
+         if(transcript && question_id>0)
          {
                 onUserSumbmitAnswerFutherAction(transcript,question_id);
          }else{
