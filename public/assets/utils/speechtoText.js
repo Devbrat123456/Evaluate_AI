@@ -60,10 +60,10 @@ micButton.addEventListener('click', function(event) {
         
             try {
             // Check if the MediaRecorder already exists and is recording
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                 console.log("MediaRecorder is already active. Continuing to send audio.");
-                 return; // Do not start a new recording if it's already active
-            }
+            // if (mediaRecorder && mediaRecorder.state === "recording") {
+            //      console.log("MediaRecorder is already active. Continuing to send audio.");
+            //      return; // Do not start a new recording if it's already active
+            // }
 
             // // Get audio stream
             // const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -85,20 +85,22 @@ micButton.addEventListener('click', function(event) {
 
             // // Start recording and send audio data every 250ms
             // mediaRecorder.start(250);
-            // console.log("Recording started...");
+            console.log("Recording started...");
 
 
 
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                      // console.log("streaming the audio");
                   recorder = RecordRTC(stream, {
                     type: 'audio',
                     mimeType: 'audio/wav',
                     recorderType: StereoAudioRecorder,
                     desiredSampRate: 16000, // match Whisper / Azure
                     numberOfAudioChannels: 1,
-                    timeSlice: 1000, // send every 1 sec
+                    timeSlice: 500, // send every 1 sec
                     ondataavailable: function(blob) {
                       blob.arrayBuffer().then(buffer => {
+                        // console.log("sendng audo to backend")
                         socket.emit('gettingAudio', buffer); // send raw WAV buffer
                       });
                     }

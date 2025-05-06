@@ -292,12 +292,12 @@ socket.on('audioPath',(audioPath)=>{
 
 socket.on('sttinterim',(text)=>{
      $('#userAnswerInput').val(text);
-     // console.log("thi is text i am getting ",text);
+     console.log("thi is text i am getting ",text);
 })
 
 socket.on('sttfinal',(text)=>{
      $('#userAnswerInput').val(text);
-     // console.log("thi is text i am getting ",text);
+     console.log("thi is text i am getting ",text);
 })
  
 window.getAudioFile = getAudioFile;
