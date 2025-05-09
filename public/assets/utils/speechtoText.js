@@ -87,7 +87,6 @@ const takingInputFromUser = async () => {
     }
 }
 
-
 async function stopRecordingAudio() {
     if (recorder) {
         recorder.stopRecording(() => {
@@ -99,7 +98,6 @@ async function stopRecordingAudio() {
             stream.getTracks().forEach(track => track.stop());
 
         });
-
         recorder = null;
     }
 }
