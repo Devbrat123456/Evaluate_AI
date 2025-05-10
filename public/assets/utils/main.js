@@ -290,15 +290,6 @@ socket.on('audioPath',(audioPath)=>{
          socket.emit('get_json_file',audioPath);
  }) 
 
-socket.on('sttinterim',(text)=>{
-     $('#userAnswerInput').val(text);
-     console.log("thi is text i am getting ",text);
-})
-
-socket.on('sttfinal',(text)=>{
-     $('#userAnswerInput').val(text);
-     console.log("thi is text i am getting ",text);
-})
  
 window.getAudioFile = getAudioFile;
 let  i=1;

@@ -1,6 +1,9 @@
 const micButton = document.getElementById('startBtn'); // or stopBtn initially
 let isRecognizing = false;
+var currentText='';
+var currentInterimText='';
 micButton.addEventListener('click', function(event) {
+    currentText="";
     if (!isRecognizing) {
         // startRecording();
         takingInputFromUser();
@@ -17,6 +20,18 @@ micButton.addEventListener('click', function(event) {
     }
 });
 
+
+socket.on('sttinterim',(text)=>{
+     $('#userAnswerInput').val(text);
+     console.log("thi is text i am getting ",text);
+})
+
+
+socket.on('sttfinal',(text)=>{
+        currentText+=" "+text;
+     $('#userAnswerInput').val(currentText);
+     console.log("thi is text i am getting ",text);
+})
 const speechToText = async (pathforAudioFile) => {
 
     const response = await fetch(pathforAudioFile);

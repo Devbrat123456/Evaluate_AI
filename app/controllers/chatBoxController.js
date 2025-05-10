@@ -356,6 +356,9 @@ const updateUserAnswerOfQuestion =async(user_email,question_id,user_answer)=>{
 }
 
 
+io.on('connect',(socket)=>{
+
+        
 let speechRecognizer;
 let pushStream;
 
@@ -363,7 +366,7 @@ function initSpeechRecognizer() {
     const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
     speechConfig.speechRecognitionLanguage = "en-US";
 
-    pushStream = sdk.AudioInputStream.createPushStream();
+    pushStream = sdk.AudioInputStream.createPushStream();   
     const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
     speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
@@ -391,7 +394,7 @@ function initSpeechRecognizer() {
     speechRecognizer.startContinuousRecognitionAsync();
 }
 
-io.on('connect',(socket)=>{
+
        initSpeechRecognizer();
       socket.on('text_file',(text)=>{
             convertTextToAudio(text);
