@@ -365,10 +365,15 @@ let pushStream;
 function initSpeechRecognizer() {
     const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
     speechConfig.speechRecognitionLanguage = "en-US";
+    speechConfig.setProperty(
+    sdk.PropertyId.Speech_SegmentationSilenceTimeoutMs,
+    "5000" // milliseconds — increase this to tolerate longer pauses (5 seconds here)
+);
 
     pushStream = sdk.AudioInputStream.createPushStream();   
     const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
     speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
 
     speechRecognizer.recognizing = (s, e) => {
         // console.log("emitting");
