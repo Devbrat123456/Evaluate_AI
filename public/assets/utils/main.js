@@ -299,12 +299,14 @@ const playAudio =(audioFilePath,audioJsonFile)=>{
         const audio = document.getElementById("audioPlay");
         audio.src = audioFilePath.audipath;
 
+
          $('#generateQtsSpan').off('click').on('click', () => {
               audio.play()
                 .then(() => {
                      console.log("calling "+i+"time");
                      
-                     $('#startBtn').removeClass('displayNone')
+                     $('#startBtn').removeClass('displayNone');
+                      $('#generateQts').html('<i class="fa fa-spinner fa-spin"></i>');
                      
                      i++;
                     appendingTexttoChatMessages(audioFilePath.speakingText);
