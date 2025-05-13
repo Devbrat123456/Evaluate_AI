@@ -88,7 +88,7 @@ const takingInputFromUser = async () => {
             recorderType: StereoAudioRecorder,
             desiredSampRate: 16000,
             numberOfAudioChannels: 1,
-            timeSlice: 500,
+            timeSlice: 1,
             ondataavailable: function(blob) {
                 blob.arrayBuffer().then(buffer => {
                     socket.emit('gettingAudio', buffer);
@@ -105,16 +105,17 @@ const takingInputFromUser = async () => {
 
 async function stopRecordingAudio() {
     if (recorder) {
+          socket.emit('endStream')
         recorder.stopRecording(() => {
               if(recorder)
               {
                 
-            const audioBlob = recorder.getBlob();
-            console.log('Recording stopped, blob ready.');
+                const audioBlob = recorder.getBlob();
+                console.log('Recording stopped, blob ready.');
 
             // Stop mic access
-            const stream = recorder.stream;
-            stream.getTracks().forEach(track => track.stop());
+                const stream = recorder.stream;
+                stream.getTracks().forEach(track => track.stop());
               }
 
         });

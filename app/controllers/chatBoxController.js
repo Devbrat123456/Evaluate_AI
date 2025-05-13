@@ -361,6 +361,7 @@ io.on('connect',(socket)=>{
         
 let speechRecognizer;
 let pushStream;
+let recognizerRestartTimer;
 
 function initSpeechRecognizer() {
     const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
@@ -388,6 +389,14 @@ function initSpeechRecognizer() {
             io.emit("sttfinal", e.result.text);
         }
     };
+     speechRecognizer.sessionStarted = (s, e) => {
+        console.log("Session started:", e.sessionId);
+    };
+
+    speechRecognizer.sessionStopped = (s, e) => {
+        console.log("Session stopped. Restarting...");
+        restartRecognizer();
+    };
 
     speechRecognizer.canceled = (s, e) => {
         console.log("CANCELED:", e.reason);
@@ -397,8 +406,15 @@ function initSpeechRecognizer() {
     };
 
     speechRecognizer.startContinuousRecognitionAsync();
+    //  clearInterval(recognizerRestartTimer);
+    // recognizerRestartTimer = setInterval(restartRecognizer, 3 * 60 * 1000); 
 }
 
+function restartRecognizer() {
+    speechRecognizer.stopContinuousRecognitionAsync(() => {
+        initSpeechRecognizer(); // re-initialize stream and recognizer
+    });
+}
 
        initSpeechRecognizer();
       socket.on('text_file',(text)=>{

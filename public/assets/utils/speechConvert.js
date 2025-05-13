@@ -305,6 +305,7 @@ const afterEditUpdateAnswer =async(user_answer,question_id)=>
 
 
 const FiveQuestionCalledPostAction=()=>{
+    
      let htmlMessage=`<p>Your Responses Has been Received .Please Wait For Result , once Evaluated you will be informed </p>`;
      $('.chat-input').html(htmlMessage);
      getResultOfQuestion();
