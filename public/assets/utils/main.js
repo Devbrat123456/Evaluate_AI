@@ -277,11 +277,11 @@ function getAudioFile(speakingText) {
 }
 let getJsonFileCount=1;
 socket.on('json_file',(jsonFile)=>{
-
+        $('#SubmitAnswerButton').addClass('displayNone');
        if(getJsonFileCount==1)
         $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
     else
-        $('#generateQts').html("<span id='generateQtsSpan'>Next Quest. </span>");
+        $('#generateQts').html("<span id='generateQtsSpan'>Next </span>");
         playAudio(jsonFile.audioPath,jsonFile.jsonFile);
         getJsonFileCount++;
  }) 
@@ -292,15 +292,20 @@ socket.on('audioPath',(audioPath)=>{
 
  
 window.getAudioFile = getAudioFile;
+
 let  i=1;
 
 const playAudio =(audioFilePath,audioJsonFile)=>{
         const audio = document.getElementById("audioPlay");
         audio.src = audioFilePath.audipath;
+
          $('#generateQtsSpan').off('click').on('click', () => {
               audio.play()
                 .then(() => {
                      console.log("calling "+i+"time");
+                     
+                     $('#startBtn').removeClass('displayNone')
+                     
                      i++;
                     appendingTexttoChatMessages(audioFilePath.speakingText);
                     animateLipSyncSequence(audioJsonFile); 
@@ -310,6 +315,8 @@ const playAudio =(audioFilePath,audioJsonFile)=>{
                 });;
         })
 }
+
+
 
 let mixer;
 const Fbxloader = new FBXLoader();

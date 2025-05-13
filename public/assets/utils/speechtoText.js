@@ -15,6 +15,7 @@ micButton.addEventListener('click', function(event) {
         micButton.id = 'startBtn';
         isRecognizing = false;
         stopRecordingAudio();
+         $('#SubmitAnswerButton').removeClass('displayNone');
         console.log("stopping the mic");
         document.getElementById('mic').classList.remove('recording');
     }
@@ -105,12 +106,16 @@ const takingInputFromUser = async () => {
 async function stopRecordingAudio() {
     if (recorder) {
         recorder.stopRecording(() => {
+              if(recorder)
+              {
+                
             const audioBlob = recorder.getBlob();
             console.log('Recording stopped, blob ready.');
 
             // Stop mic access
             const stream = recorder.stream;
             stream.getTracks().forEach(track => track.stop());
+              }
 
         });
         recorder = null;

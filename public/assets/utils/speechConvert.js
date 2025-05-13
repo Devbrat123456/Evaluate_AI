@@ -57,17 +57,18 @@
 // }
 
 var calledNoOfQuestion=1;
+const limitQuestion=6;
 
   const onUserSumbmitAnswer =()=>{
         let transcript =  $('#userAnswerInput').val();
         let question_id =  $('#question_id').val();
 
         // console.log("what you are submiting ",transcript,question_id);
-         if(transcript && question_id>0)
+         if(transcript && transcript!=' ' && question_id>0)
          {
                 onUserSumbmitAnswerFutherAction(transcript,question_id);
          }else{
-            messagePop("No answer Found",'error');
+            messagePop("No answer Found Please Provide Answer",'error');
          }
        
   }
@@ -98,6 +99,7 @@ var calledNoOfQuestion=1;
         </div>`);
         $('#userAnswerInput').val('');
         processAfterEndingRecognitsation();
+          $('#generateQts').html('<i class="fa fa-spinner fa-spin"></i>');
 
     }
 
@@ -123,7 +125,8 @@ const processAfterEndingRecognitsation=()=>{
 
 const submitResponse=async(emailid,question_id,answer)=>{
       isRecognizing=false;
-      
+       // $('#startBtn').addClass('displayNone');
+     
     let url=`https://evalaiapiv2-gygqaffwdvc7e0h2.northeurope-01.azurewebsites.net/submit_response/`;
     let parameters={
         method:"POST",
@@ -141,7 +144,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
         let response = await fetch(url,parameters);
         data = await response.json();
 
-           if(calledNoOfQuestion==6)
+           if(calledNoOfQuestion>=limitQuestion)
            {
                  if(confirmationToEndSession())
                  {
@@ -150,7 +153,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
            }
             if(data.followup_question)
             {
-                $('#startBtn').removeClass('displayNone');
+                
                 calledNoOfQuestion++;
                 let input =data.followup_question;
                 if (input) {
@@ -164,7 +167,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
             }
             else if(data.next_question)
             {
-                $('#startBtn').removeClass('displayNone');
+               
                 calledNoOfQuestion++;
                 let input =data.next_question.question;
                 if (input) {
@@ -239,7 +242,7 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
 
             if(data.question)
             {
-                $('#startBtn').removeClass('displayNone');
+              
                 calledNoOfQuestion++;
                 let input =data.question;
                 $('#question_id').val(data.question_id);
@@ -309,7 +312,7 @@ const FiveQuestionCalledPostAction=()=>{
 
 
 const confirmationToEndSession=()=>{
-     if(calledNoOfQuestion==6)
+     if(calledNoOfQuestion>=limitQuestion)
      {     
         Swal.fire({
         title: 'Are you sure to End The Session Once Submitted you cannot change you answer?',
@@ -325,6 +328,7 @@ const confirmationToEndSession=()=>{
                  FiveQuestionCalledPostAction();
                  return true;
             } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        onSessionEndCancel();
                     return false;
             }
         });
@@ -333,6 +337,15 @@ const confirmationToEndSession=()=>{
         console.log("no of question called 5");
      }
     return false;
+
+}
+
+const onSessionEndCancel=async()=>{
+                        messagePop('You can just edit your record','error');
+                         $('#SubmitAnswerButton').addClass('displayNone');
+                         $('#startBtn').addClass('displayNone');
+                         $('#generateQts').html('<span onclick="confirmationToEndSession()">Submit</span>');
+
 
 }
 
