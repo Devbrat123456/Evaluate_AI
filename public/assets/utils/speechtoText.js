@@ -24,14 +24,12 @@ micButton.addEventListener('click', function(event) {
 
 socket.on('sttinterim',(text)=>{
      $('#userAnswerInput').val(text);
-     console.log("thi is text i am getting ",text);
 })
 
 
 socket.on('sttfinal',(text)=>{
         currentText+=" "+text;
      $('#userAnswerInput').val(currentText);
-     console.log("thi is text i am getting ",text);
 })
 const speechToText = async (pathforAudioFile) => {
 
@@ -88,7 +86,7 @@ const takingInputFromUser = async () => {
             recorderType: StereoAudioRecorder,
             desiredSampRate: 16000,
             numberOfAudioChannels: 1,
-            timeSlice: 1,
+            timeSlice: 250,
             ondataavailable: function(blob) {
                 blob.arrayBuffer().then(buffer => {
                     socket.emit('gettingAudio', buffer);

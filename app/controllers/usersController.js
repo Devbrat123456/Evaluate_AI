@@ -26,7 +26,7 @@ const usersController = {
 
     index: async (req, res) => {
         const allData = await UserModelInstance.findAll();
-        console.log(req);
+       
         res.render(`${module_path}/index`, {
             page, description, allData, encryptId
         });
@@ -584,10 +584,12 @@ const usersController = {
         try {
               const {user_id}= req.body;
                 let filePath = req.files[0].filename;
+                console.log(filePath);
+                 res.setHeader('Content-Disposition', 'inline'); 
             const updateStatus = await UserModelInstance.update({ RESUME: filePath ?? null}, `id=${user_id}`);
-
-            if (updateStatus.affectedRows > 0) {
-                return res.status(200).json({"message":"Updated Successfully","filePath":filePath});
+            console.log(updateStatus);
+            if (updateStatus) {
+                return res.status(200).json({"message":"Updated Successfully",filePath});
             } else {
                 return res.status(500).json({"message":"Failed Updation"});
             }

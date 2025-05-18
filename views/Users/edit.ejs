@@ -34,15 +34,14 @@
                                     <input type="tel" class="input-text" id="phone" name="PHONE"
                                         placeholder="Enter your phone number" value="<%- data.PHONE %>" required>
                                 </div>
-                                <div class="col-md-3 form-row">
-                                    <label for="" class="form-label" onclick="openModal('ResumePdfModal')">Upload/View Resume (<span style="color:red">PDF/DOCX </span>)</label>
-                                  
+                                <div class="col-md-3 form-row " id="viewResumeDiv">
+
+                                    <label for="resume" class="form-label">Upload Resume (<span style="color:red">PDF/DOCX </span>)</label>
+                              <a  class="btn btn-sm" id="viewResume" href="/assets/resume/<%- data.RESUME %>"target="_blank">View </a>
 
                                     <input type="file" class="input-text" id="resume"
-                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" name="RESUME">
+                                        accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" name="RESUME"  required>
                                 </div>
-
-
 
                             </div>
                             <div class="row">
@@ -189,8 +188,8 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-md-10"></div>
-                                <div class="col-md-2"><input type="button" name="" class="register" onclick="openModal('interviewProceed','<%-data.id%>','interview_user_id')" value="Proceed For Interview"></div>
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3 my-4"><input type="button" name="" class="register" onclick="openModal('interviewProceed','<%-data.id%>','interview_user_id')" value="Proceed"></div>
                             </div>
 
                        
@@ -366,9 +365,6 @@
                 })
             }
 
-
-
-
  
   const uploadMedia=(id,eventName,key,value,url,idtoBeUpdatedON)=>{
     let fileInput = document.getElementById(id);
@@ -395,7 +391,7 @@
 
                            if(data.filePath)
                            {
-                                $('#'+idtoBeUpdatedON).attr('src',`/assets/${id}/${data.filePath}`);
+                                $('#'+idtoBeUpdatedON).attr('href',`/assets/${id}/${data.filePath}`);
                                 messagePop(data.message);
                            }else{
 
@@ -419,36 +415,161 @@
 
 let user_id ="<%- data.id %>";
 // uploadMedia('profile-photo','change','user_id',user_id,"/upload-profile");
-uploadMedia('resume','change','user_id',user_id,"/upload-resume",'ResumePdf');
+uploadMedia('resume','change','user_id',user_id,"/upload-resume",'viewResume');
 
 
 
   const proceedForInterview = ()=>{
         let user_id=$('#interview_user_id').val();
-        let level_id=$('#level_id').val();
-        let skill_id_for_interview=$('#skill_id_for_interview').val();
-        console.log(skill_id_for_interview,level_id,user_id);
+        let fullName=$('#fullName').val();
+        let interview_experience=$('#interview_experience').val();
+
+        let resume="<%-data.RESUME%>";
+         if(!resume)
+         {
+              let fileInput = document.getElementById('resume');
+              resume = fileInput.files[0];   
+         }
+             
+        
+        let job_role=$('#skill_id_for_interview').val();
 
           if(!user_id)
           {
             messagePop("no User Id Found",'error');
             return false;
-          }
-           if(!level_id)
+          } 
+           if(!resume)
           {
-            messagePop("no level Id Found",'error');
+            messagePop("no resume  Found",'error');
             return false;
           }
-           if(!skill_id_for_interview)
+            if(!fullName)
+          {
+            messagePop("no Name of User Found",'error');
+            return false;
+          }
+           if(!interview_experience)
+          {
+            messagePop("no Experience Found",'error');
+            return false;
+          }
+           if(!job_role)
           {
             messagePop("no Skill  Found",'error');
             return false;
           }
 
-              window.location.href=`/chatbox?user_id=${user_id}&level_id=${level_id}&skill_id=${skill_id_for_interview}`;
+            let sessionId = getSessionId(fullName,job_role,interview_experience,resume);
+              if(!sessionId)
+              {
+                
+                 messagePop("no session id found",'error');
+
+              }
+              // window.location.href="/chatbox?user_id=1&level_id=1&skill_id=7";
 
   }
     
+    const getSessionId=async(name,job_role,experience,resume_file)=>{
+          try{
+                 const formData = new FormData();
+        formData.append('name', name);
+         let checkResume="<%-data.RESUME%>";
+          if(checkResume)
+          {
+                resume_file =await getResumeOfUser(checkResume);
+          }
+        formData.append('job_role', job_role);
+        formData.append('experience',experience);
+        formData.append('resume_file',resume_file);;
+        let url ="https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/start";
+        let parameters={
+
+                method:"POST",
+                body:formData
+        }
+          let response = await fetch(url,parameters);
+          data= await response.json();
+            if(data.session_id)
+            {
+                 sessionStorage.setItem('session_id',data.session_id);
+
+                 redirectWithPost(`/chatbox`,{
+                   session_id: data.session_id,user_id
+                 })
+            }
+           return false;
+          }
+          catch(err)
+          {
+              console.warn(err);
+              return false;
+          }
+       
+
+    }
+
+
+    const getResumeOfUser=async(path)=>{
+        
+            try {
+                    const response = await fetch("/assets/resume/" + path);
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const blob = await response.blob();
+                    const type=getMimeType(path);
+                    const file = new File([blob], path, { type: type });
+                    return file;
+                   
+            } catch (err) {
+                    console.error("Error fetching file:", err);
+                    return null;
+            }
+
+              
+
+    }
+
+    function getMimeType(filename) {
+     const ext = filename.split('.').pop().toLowerCase();
+      switch (ext) {
+        case 'pdf':
+          return 'application/pdf';
+        case 'docx':
+          return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        case 'doc':
+          return 'application/msword';
+        default:
+          return 'application/octet-stream'; // Fallback for unknown types
+      }
+}
+
+function redirectWithPost(url, data) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = url;
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = data[key];
+      form.appendChild(input);
+    }
+  }
+   const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "_csrf";
+      input.value = "<%=csrfToken%>";
+      form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
         </script>
 
         <%- include('../includes/footer') %>

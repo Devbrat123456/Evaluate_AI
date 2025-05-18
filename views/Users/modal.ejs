@@ -573,23 +573,6 @@
 
 
 
-
-<div class="container">
-    <div class="modal fade" id="ResumePdfModal" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="padding:20px 50px;">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body" style="padding:20px 50px;">
-                        <iframe class="pdf" id="ResumePdf"   src="/assets/resume/<%- data.RESUME %>" width="800" height="500"></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
 <%  
 let levels=['Basic','Medium','Advanced'];
 
@@ -604,39 +587,25 @@ let levels=['Basic','Medium','Advanced'];
                 </div>
                 <div class="modal-body" style="padding:20px 50px;">
                         
-                    <form action="/editUserEducation" id="editEducationForm" method="POST">
+                    <form  method="POST">
                         <input type="hidden" name="interview_user_id" id="interview_user_id" >
                         <div class="row">
                             <div class="col-md-6 form-row">
-                                <label class="bold" for="skill_id_for_interview">Please Select Skill</label>
-                                <select class="form-control" id="skill_id_for_interview" style="width:330px;" 
-                                                name="skill_id_for_interview" required>
-                                                <option value="">Select Skill</option>
-                                                <% allSkills.forEach((value)=>{%>
-                                                    <option value="<%- value.id %>"><%- value.category %>
-                                                    </option>
-                                                    <% }) %>
-
-                                 </select>
+                                <label class="bold" for="skill_id_for_interview">Job Role </label>
+                                <input type="text" class="form-control" id="skill_id_for_interview" style="width:330px;" 
+                                                name="skill_id_for_interview" required  placeholder="Enter Your Job Role">
+                                              
                             </div>
                             <div class="col-md-6">
-                                  <label class="bold" for="education">Please Select Level</label>
-                                <select class="form-control" id="level_id" 
-                                                name="level_id" required>
-                                                <option value="">Select Level</option>
-                                                <% levels.forEach((value,key)=>{%>
-                                                    <option value="<%- key+1 %>"><%- value %>
-                                                    </option>
-                                                    <% }) %>
-
-                                 </select>
+                                <label class="bold" for="interview_experience">Experience(Yrs)  </label>
+                               <input type="text" class="form-control" required id="interview_experience"
+                                name="notice_period" placeholder="Enter your Experience">
 
                             </div>
                         </div>
                         <div class="row">
-                                <div class="col-md-9"></div>
-                                <div class="col-md-3">
-                                    
+                                <div class="col-md-8"></div>
+                                <div class="col-md-4 my-4">
                             <input  type="button" onclick="proceedForInterview()" class="btn btn-success btn-sm" value="Okay">
                                 </div>
                         </div>

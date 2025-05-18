@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage });
 
-router.get('/', chatBoxController.avatar);
+router.post('/', chatBoxController.avatar);
 router.post('/storeToken', chatBoxController.storeToken);
 router.get('/textToSpeech', chatBoxController.textToSpeech);
 router.post('/speechToText',upload.any('audio'),chatBoxController.speechToText);

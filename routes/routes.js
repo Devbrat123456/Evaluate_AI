@@ -71,7 +71,7 @@ router.post('/editUserEducation', userClass.editUserEducation);
 router.post('/upload-profile',upload.any('profile') ,userClass.UploadProfile);
 
 router.post('/upload-resume', (req, res, next) => {
-    upload2.any('RESUME')(req, res, (err) => {
+    upload2.any('profile')(req, res, (err) => {
         if (err) {
             return res.status(500).json({ success: false, message: err.message });
         }

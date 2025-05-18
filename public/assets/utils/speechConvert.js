@@ -64,7 +64,7 @@ const limitQuestion=6;
         let question_id =  $('#question_id').val();
 
         // console.log("what you are submiting ",transcript,question_id);
-         if(transcript && transcript!=' ' && question_id>0)
+         if(transcript && transcript!=' ' && question_id)
          {
                 onUserSumbmitAnswerFutherAction(transcript,question_id);
          }else{
@@ -105,16 +105,13 @@ const limitQuestion=6;
 
 const processAfterEndingRecognitsation=()=>{
       
-        let skill=$('#skill_id_of_user').val();
-        let level_id=$('#level_id').val();
-        let user_id=$('#user_id').val();
-        let email=$('#user_email').val();
+        
+        let sessionId=$('#session_id').val();
         let question_id=$('#question_id').val();
         let answer=$('#user_answer').val();
-        console.log(answer,question_id,email);
-         if(question_id && answer && email)
+         if(question_id && answer && sessionId)
          {
-            submitResponse(email,question_id,answer);
+            submitResponse(sessionId,question_id,answer);
          }else{
             console.log("no submitted");
          }
@@ -123,71 +120,32 @@ const processAfterEndingRecognitsation=()=>{
 
 }
 
-const submitResponse=async(emailid,question_id,answer)=>{
+
+const submitResponse=async(sessionId,question_id,answer)=>{
       isRecognizing=false;
-       // $('#startBtn').addClass('displayNone');
-     
-    let url=`https://evalaiapiv2-gygqaffwdvc7e0h2.northeurope-01.azurewebsites.net/submit_response/`;
+    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/answer`;
     let parameters={
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
         },
         body:JSON.stringify({
-        "emailid": emailid,
+        "session_id": sessionId,
         "question_id": question_id,
-        "candidate_answer": answer
+        "answer": answer
         })
     };
 
      try{
         let response = await fetch(url,parameters);
         data = await response.json();
-
            if(calledNoOfQuestion>=limitQuestion)
            {
-                 if(confirmationToEndSession())
-                 {
-                     return true;
-                 }
+                 return confirmationToEndSession();
            }
-            if(data.followup_question)
-            {
-                
-                calledNoOfQuestion++;
-                let input =data.followup_question;
-                if (input) {
+            let session_id=$('#session_id').val();
+            getQuestionNew(session_id);  
 
-                       $('#question_id').val(data.FollowupID);
-                        getAudioFile(input);
-                } else {
-                  console.log("No match found.");
-                }
-                erroHandlingCalledQuestion=1;
-            }
-            else if(data.next_question)
-            {
-               
-                calledNoOfQuestion++;
-                let input =data.next_question.question;
-                if (input) {
-
-                       $('#question_id').val(data.next_question.question_id);
-                        getAudioFile(input);
-                } else {
-                  console.log("No match found.");
-                }
-                erroHandlingCalledQuestion=1;
-            }else if(data.message){
-
-                      let skill=$('#skill_id_of_user').val();
-                      let level_id=$('#level_id').val();
-                      let user_id=$('#user_id').val();
-                      let email=$('#user_email').val();
-                      let question_id=$('#question_id').val();
-                      console.log(topic.value,level_id,emailid,user_id)
-                    getQuestion(topic.value,level_id,emailid,user_id);  
-            } 
      }catch(err) 
      {
         if (erroHandlingCalledQuestion < 4) {
@@ -195,7 +153,7 @@ const submitResponse=async(emailid,question_id,answer)=>{
         erroHandlingCalledQuestion++;  // increment first
         await new Promise(resolve => setTimeout(resolve, 1000 * erroHandlingCalledQuestion));
 
-        return submitResponse(emailid, question_id, answer);
+        return submitResponse(sessionId, question_id, answer);
         }else{
 
              $('#generateQts').html("Something went wrong. Please try again later.");
@@ -270,6 +228,75 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
      }
 }
 
+const getQuestionNew= async(session_id)=>{
+    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/next-question`;
+    let parameters={
+        method:"POST",
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+    session_id: session_id
+  })
+
+    };
+     try{
+        let response = await fetch(url,parameters);
+         if (!response.ok) {
+            // Check for 500 specifically
+            if (response.status === 500) {
+                console.warn("Server error 500: Internal Server Error");
+
+                    if (erroHandlingCalledQuestion < 4) {
+                    erroHandlingCalledQuestion++;  // increase counter first
+                    return getQuestionNew(session_id);  // return to stop further code
+                    } else {
+                    $('#generateQts').html("Something went wrong. Please try again later.");
+                    return;
+                    }
+            } else {
+                console.warn(`Error: Received status code ${response.status}`);
+            }
+            if (erroHandlingCalledQuestion < 4) {
+                erroHandlingCalledQuestion++;
+                return getQuestionNew(session_id);
+            } else {
+                $('#generateQts').html("Something went wrong. Please try again later.");
+                return;
+            }
+        }
+        data = await response.json();
+
+            if(data.question)
+            {
+              
+                calledNoOfQuestion++;
+                let input =data.question;
+                $('#question_id').val(data.question_id);
+                if (input) {
+                        getAudioFile(input);
+                        console.log(input,"also fetching audio file");
+                } else {
+                  messagePop("No match found.",'error');
+                }
+                erroHandlingCalledQuestion=1;
+            }else if(data.message){
+                    if(erroHandlingCalledQuestion<4)
+                    {
+                        $('#generateQts').html(data.message);
+                        erroHandlingCalledQuestion++;  // increment first
+                        return getQuestionNew(session_id);
+                    }   
+            } 
+     }catch(err)
+     {
+            if (erroHandlingCalledQuestion < 4) {
+                erroHandlingCalledQuestion++;  // increment first
+                return getQuestionNew(session_id);
+            }
+     }
+}
+
 function  getDatatoEdit(event){
       let receiveText =$(event).closest('.sent').find('.receive-text');
     let question_id =$(event).attr('question_id');
@@ -296,6 +323,7 @@ function  getDatatoEdit(event){
 const afterEditUpdateAnswer =async(user_answer,question_id)=>
 {
     let userEmail=$('#user_email').val();
+     console.log(user_answer,question_id,userEmail);
       socket.emit('answerUpdate',{
         "question_id": question_id,
         'user_answer':user_answer,
@@ -308,8 +336,20 @@ const FiveQuestionCalledPostAction=()=>{
     
      let htmlMessage=`<p>Your Responses Has been Received .Please Wait For Result , once Evaluated you will be informed </p>`;
      $('.chat-input').html(htmlMessage);
-     getResultOfQuestion();
+
+    let sessionId=sessionStorage.getItem('session_id');
+     disablingToEdit();
+     evaluateAnswerApi(sessionId);
 }
+
+const disablingToEdit = async () => {
+    let editClasses = document.querySelectorAll('.fa-edit');
+    editClasses.forEach(el => {
+        el.classList.remove('fa-edit');
+    });
+};
+
+
 
 
 const confirmationToEndSession=()=>{
@@ -353,7 +393,6 @@ const onSessionEndCancel=async()=>{
 
 const getResultOfQuestion =async()=>{
 
-    let getAllQuestionAnswer=document.getElementsByClassName('receive-text');
 
     // Array.from(getAllQuestionAnswer).forEach((element)=>{
     //         let question_id =$(element).attr('question_id');
@@ -381,31 +420,31 @@ Executes a function for each element, and returns an array of the results.
 Perfect for when each function returns a Promise, and you want to use Promise.all():
 */
      /* first collect all promises */
-   const allPromises=  Array.from(getAllQuestionAnswer).map((element)=>{
-        let question=$(element).attr('question_id');
-        let answer=$(element).text();
-        console.log(question,answer,"this is answerUpdate");
-        return evaluateAnswerApi(question,answer);
-     });
-   console.log(allPromises);
+     // const allPromises=  Array.from(getAllQuestionAnswer).map((element)=>{
+     //    let question=$(element).attr('question_id');
+     //    let answer=$(element).text();
+     //    console.log(question,answer,"this is answerUpdate");
+     // });
+   // console.log(allPromises);
 
-   const getResultAfterEvaluation = await Promise.all(allPromises);    // waiting for all promises to be resolved 
-                 displayTheResult(getResultAfterEvaluation);
+   // const getResultAfterEvaluation = await Promise.all(allPromises);    // waiting for all promises to be resolved 
+   //               displayTheResult(getResultAfterEvaluation);
 }
 
-const evaluateAnswerApi= async(question,answer)=>{
-
-    let url=`https://evalaiapiv2-gygqaffwdvc7e0h2.northeurope-01.azurewebsites.net/evaluate_response/`;
+const evaluateAnswerApi= async(session_id)=>{
+  let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/evaluate-session`;
     let parameters={
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
         },
-        body:JSON.stringify({question,answer})
-    };
-
+        body:JSON.stringify({
+    session_id: session_id
+    })
+    }
     let response = await fetch(url,parameters);
     let data = response.json();
+     console.log(data);
      return data;       // returning promises;
 }
 

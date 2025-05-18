@@ -18,20 +18,18 @@ const io = getIo();
 const chatBoxController = {
 
     avatar: async (req, res, next) => {
+            const {session_id,user_id}= req.body;
 
-            const {user_id,level_id,skill_id}=req.query;
+        let level_id=1;
         const existingRecord = await userModel.findOne({id:user_id});
-        const skill = await skillModel.findOne({id:skill_id});
-        // console.log(skill);
-        if (existingRecord.length ==0) {
-
-            req.flash('error', 'No user Found Unauthorized entry ');
+         console.log(session_id);
+      
+        if (!session_id ) {
+            req.flash('error', 'No Session Generated');
             return res.redirect('/');
 
-        } else {
-            shouldFetch = 1;
-        }
-        return res.render(`${module_path}/avatar`,{user:existingRecord[0],level_id,skill:skill[0]});
+        } 
+        return res.render(`${module_path}/avatar`,{user:existingRecord[0],level_id,skill:''});
     },
     storeToken: async (req, res, next) => {
 
@@ -431,6 +429,7 @@ function restartRecognizer() {
       });
 
        socket.on('answerUpdate',async(response)=>{
+           console.log(response);
             updateUserAnswerOfQuestion(response.user_email,response.question_id,response.user_answer);
 
        })

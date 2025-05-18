@@ -26,11 +26,12 @@
               <input type="hidden" id="question_id" >
               <input type="hidden" id="user_answer" >
               <input type="hidden" id="user_id" value="<%-user.id %>">
-              <input type="hidden" id="level_id" value="<%-level_id %>">
-              <input type="hidden" id="topic" value="<%-skill.category %>">
-              <input type="hidden" id="skill_id_of_user" value="<%-level_id %>">
+              <input type="hidden" id="level_id" value="">
+              <input type="hidden" id="topic" value="">
+              <input type="hidden" id="skill_id_of_user" value="">
               <input type="hidden" id="user_name" value="<%-user.NAME %>">
               <input type="hidden" id="user_email" value="<%-user.EMAIL %>">
+              <input type="hidden" id="session_id" value="">
               <button class="send-button displayNone" id="startBtn" title="Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
           </div>
         </div>
@@ -38,7 +39,7 @@
   </div>
   <div class="row">
      <div class="col-md-12">
-      </div>
+      </div>I
   </div>
    
 <script src="/assets/js/gsap.min.js"></script>
@@ -54,9 +55,11 @@
             let name ="<%-user.NAME %>"
             let email ="<%-user.EMAIL %>"
             let user_id ="<%-user.id %>";
-            let level_id="<%-level_id %>";
-            let skill="<%-skill.category %>";
-            getQuestion(skill,level_id,email,user_id);
+            // getQuestion(skill,level_id,email,user_id);
+            let sessionId=sessionStorage.getItem('session_id');
+            $('#session_id').val(sessionId);
+             console.log(sessionId);
+            getQuestionNew(sessionId)
             openModalForLogin();
     };
 

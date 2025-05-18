@@ -381,3 +381,6 @@ public/assets/audio/ElevenLabsNew.wav
 .env
 /public/assets/audio/
 public/assets/audio/audioFile.json
+
+
+public/assets/
