@@ -317,18 +317,53 @@ function  getDatatoEdit(event){
             $(event).removeClass('fas fa-edit');
             $(event).addClass('far fa-save');
      }
-
 }
 
 const afterEditUpdateAnswer =async(user_answer,question_id)=>
 {
-    let userEmail=$('#user_email').val();
-     console.log(user_answer,question_id,userEmail);
-      socket.emit('answerUpdate',{
+
+        let sessionId=$('#session_id').val();
+         if(question_id && user_answer && sessionId)
+         {
+            updateResponse(sessionId,question_id,user_answer);
+         }else{
+            console.log("no Updation");
+         }
+     
+}
+
+
+const updateResponse=async(sessionId,question_id,answer)=>{
+    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/answer`;
+    let parameters={
+        method:"POST",
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+        "session_id": sessionId,
         "question_id": question_id,
-        'user_answer':user_answer,
-        'user_email':userEmail,
-    }); 
+        "answer": answer
+        })
+    };
+
+     try{
+        let response = await fetch(url,parameters);
+        data = await response.json();
+         
+     }catch(err) 
+     {
+        if (erroHandlingCalledQuestion < 4) {
+        $('#generateQts').html(data.message);
+        erroHandlingCalledQuestion++;  // increment first
+        await new Promise(resolve => setTimeout(resolve, 1000 * erroHandlingCalledQuestion));
+
+        return updateResponse(sessionId, question_id, answer);
+        }else{
+
+           messagePop("Something went wrong ");
+        }
+     }
 }
 
 
@@ -348,6 +383,8 @@ const disablingToEdit = async () => {
         el.classList.remove('fa-edit');
     });
 };
+
+
 
 
 
