@@ -267,6 +267,17 @@ const chatBoxController = {
            {
              return res.status(500).json({message:error||"Something wrong"});
            }
+     },
+     subscriptionKey:async(req,res)=>{
+
+           try{
+                   return res.status(200).json({subcrition_key:process.env.API_SUBSCRIPTION_KEY,base_url:process.env.API_BASE_URL});
+           }
+           catch(error)
+           {
+             return res.status(500).json({message:error||"Something wrong"});
+
+           }
      }
 
 }

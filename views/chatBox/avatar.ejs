@@ -56,10 +56,9 @@
             let email ="<%-user.EMAIL %>"
             let user_id ="<%-user.id %>";
             // getQuestion(skill,level_id,email,user_id);
-            let sessionId=sessionStorage.getItem('session_id');
-            $('#session_id').val(sessionId);
-             console.log(sessionId);
-            getQuestionNew(sessionId)
+           
+           
+            fetchSubscriptionKeyAndBaseUrl();
             openModalForLogin();
     };
 

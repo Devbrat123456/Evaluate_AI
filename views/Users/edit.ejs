@@ -482,11 +482,19 @@ uploadMedia('resume','change','user_id',user_id,"/upload-resume",'viewResume');
           }
         formData.append('job_role', job_role);
         formData.append('experience',experience);
-        formData.append('resume_file',resume_file);;
-        let url ="https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/start";
+        formData.append('resume_file',resume_file);
+
+        // let url ="https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/start";
+        let url ="https://apiauthenticator.azure-api.net/docs/start";
+        let api_key="22f0352b4a644d6b9f534aa7e43d5d04";
+
         let parameters={
 
                 method:"POST",
+                 headers: {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key':api_key
+        },
                 body:formData
         }
           let response = await fetch(url,parameters);

@@ -1,5 +1,4 @@
 
-
 // let isRecognizing = false;
 
 //   if (!('webkitSpeechRecognition' in window)) {
@@ -56,8 +55,32 @@
 
 // }
 
+ 
 var calledNoOfQuestion=1;
-const limitQuestion=6;
+const limitQuestion=12;
+var base_url_for_Api;
+var api_key;
+
+
+ const fetchSubscriptionKeyAndBaseUrl=async(req,res)=>{
+     try{
+           
+                     let sessionId=sessionStorage.getItem('session_id');
+                     base_url_for_Api="https://apiauthenticator.azure-api.net/docs/";
+                     
+                     api_key="22f0352b4a644d6b9f534aa7e43d5d04";
+                      $('#session_id').val(sessionId);
+                    getQuestionNew(sessionId);
+
+     }
+     catch(err)
+     {
+         console.warn(err);
+
+     }
+    
+ }   
+
 
   const onUserSumbmitAnswer =()=>{
         let transcript =  $('#userAnswerInput').val();
@@ -123,7 +146,7 @@ const processAfterEndingRecognitsation=()=>{
 
 const submitResponse=async(sessionId,question_id,answer)=>{
       isRecognizing=false;
-    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/answer`;
+    let url=`${base_url_for_Api}answer`;
     let parameters={
         method:"POST",
         headers: {
@@ -229,11 +252,13 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
 }
 
 const getQuestionNew= async(session_id)=>{
-    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/next-question`;
+    let url=`${base_url_for_Api}next-question`;
+
     let parameters={
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key':api_key
         },
         body:JSON.stringify({
     session_id: session_id
@@ -334,11 +359,15 @@ const afterEditUpdateAnswer =async(user_answer,question_id)=>
 
 
 const updateResponse=async(sessionId,question_id,answer)=>{
-    let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/answer`;
+    // let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/answer`;
+    let url=`${base_url_for_Api}answer`;
+
+
     let parameters={
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key':api_key
         },
         body:JSON.stringify({
         "session_id": sessionId,
@@ -469,7 +498,10 @@ Perfect for when each function returns a Promise, and you want to use Promise.al
 }
 
 const evaluateAnswerApi= async(session_id)=>{
-  let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/evaluate-session`;
+  // let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/evaluate-session`;
+
+    let url=`${base_url_for_Api}evaluate-session`;
+
     let parameters={
         method:"POST",
         headers: {
