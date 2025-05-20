@@ -6,7 +6,6 @@ const client_id = process.env.GOOGLE_CLIENT_ID;
 const secret_key = process.env.GOOGLE_SECRET_KEY;
 const { getDatetime } = require('../../config/utils/helper');
 const callbackurl = process.env.GOOGLE_CALLBACK_URL;
-console.log(callbackurl,"thhs is callbackurl");
 
 
 passport.use(new googleStrategy({
