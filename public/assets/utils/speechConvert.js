@@ -261,8 +261,8 @@ const getQuestionNew= async(session_id)=>{
         'Ocp-Apim-Subscription-Key':api_key
         },
         body:JSON.stringify({
-    session_id: session_id
-  })
+            session_id: session_id
+        })
 
     };
      try{
