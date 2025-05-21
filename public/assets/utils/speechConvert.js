@@ -151,6 +151,8 @@ const submitResponse=async(sessionId,question_id,answer)=>{
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
+         'Ocp-Apim-Subscription-Key':api_key
+
         },
         body:JSON.stringify({
         "session_id": sessionId,
