@@ -473,7 +473,7 @@ uploadMedia('resume','change','user_id',user_id,"/upload-resume",'viewResume');
     
     const getSessionId=async(name,job_role,experience,resume_file)=>{
           try{
-                 const formData = new FormData();
+        const formData = new FormData();
         formData.append('name', name);
          let checkResume="<%-data.RESUME%>";
           if(checkResume)

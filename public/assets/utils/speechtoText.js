@@ -9,18 +9,32 @@ micButton.addEventListener('click', function(event) {
         takingInputFromUser();
         isRecognizing = true;
         console.log("starting the mic");
+        micButton.title="Click to Stop Mic";
+        $('#generateQts').attr('title',"Please Answer the Question Wait for Next Question");
+
+
         micButton.id = 'stopbtn';
         document.getElementById('mic').classList.add('recording');
     } else {
         micButton.id = 'startBtn';
+        micButton.title=" Click to Speak in Mic";
         isRecognizing = false;
         stopRecordingAudio();
          $('#SubmitAnswerButton').removeClass('displayNone');
         console.log("stopping the mic");
         document.getElementById('mic').classList.remove('recording');
     }
+updateTitle();
+
 });
 
+  function updateTitle(){
+
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+}
 
 socket.on('sttinterim',(text)=>{
      $('#userAnswerInput').val(text);

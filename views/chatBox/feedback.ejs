@@ -1,0 +1,81 @@
+<%- include('../includes/header') %>
+    <style>
+        #form-container {
+            margin-top: 100px !important;
+            ;
+
+        }
+
+        .form-detail img {
+            width: 70%;
+        }
+
+        .button {
+
+            display: flex;
+            justify-self: end;
+
+        }
+
+        .button input {
+            margin: reset !important;
+        }
+    </style>
+    <main>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-v7">
+                    <div class="page-content">
+                        <div class="form-v7-content ">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-detail">
+                                        <img src="/assets/img/feedback.jpg">
+                                        <h2 class="typ-18Bold">Please Share us your valuable feedback</h2>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <form class="form-detail" action="/chatbox/feedBackStore" method="post"
+                                        id="feedBackForm">
+                                        <div class="text-center">
+                                            <h1>Feedback</h1>
+                                        </div>
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+
+                                        <input type="hidden" name="csrf-token">
+                                        <input type="hidden" name="session_id" value="<%=session_id%>">
+                                        <div class="row">
+                                            <label for="rating" class="form-label">Rating</label>
+                                            <select class="form-select" id="rating" required name="rating">
+                                                <option value="" disabled selected>Select a rating</option>
+                                                <option value="5">5 - Excellent</option>
+                                                <option value="4" >4 - Very Good</option>
+                                                <option value="3" >3 - Good</option>
+                                                <option value="2" >2 - Fair</option>
+                                                <option value="1" >1 - Poor</option>
+                                            </select>
+                                        </div>
+                                        <div class="row">
+                                            <label for="comments" class="form-label">Comments</label>
+                                            <textarea class="form-control" id="comments" rows="6" name="feedback"
+                                                placeholder="Write your feedback here..." required></textarea>
+                                        </div>
+
+                                        <div class="row my-4 button">
+                                            <input type="submit" name="" form_id="feedBackForm"
+                                                class="register FormSubmit" value="Submit">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+
+    <%- include('../includes/footer') %>

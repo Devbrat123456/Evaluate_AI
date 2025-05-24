@@ -3,13 +3,14 @@ const CommonModel = require('../models/CommonModel');
 const userModel = new CommonModel('users');
 const skillModel = new CommonModel('skills');
 const questionModel = new CommonModel('questions');
+const feedbackModel = new CommonModel('Feedback');
 const CandidateResponsesModel = new CommonModel('CandidateResponses');
 const sdk = require("microsoft-cognitiveservices-speech-sdk");
 const readline = require("readline");
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require('child_process');
-const { getJsonFile, runRhubarbCommand,currentTimeStamp } = require('../../config/utils/helper');
+const { getJsonFile, runRhubarbCommand,currentTimeStamp,getDatetime } = require('../../config/utils/helper');
 const {AssemblyAI} =require('assemblyai');
 const {getIo}= require('../../config/socket');
 const io = getIo();
@@ -278,8 +279,83 @@ const chatBoxController = {
              return res.status(500).json({message:error||"Something wrong"});
 
            }
-     }
+     },
+     getFeedBack:async(req,res)=>{
 
+
+          try{
+               const {session_id} =req.body;
+
+                 return res.render(`${module_path}/feedback`,{
+                    session_id
+                 });
+          }
+          catch(error)
+          {
+             return res.status(500).json({message:error||"Something wrong"});
+
+
+          }
+     },feedBackStore:async(req,res)=>{
+          try{
+               const { rating,feedback,session_id}=req.body;
+                 if(!session_id)
+                 {
+                     return res.status(500).json({message:"Please Provide Session id"});
+                 }
+          
+            
+
+                      let existingRecord=await feedbackModel.findOne({session_id});
+                      let resonponse;
+                    //    console.log(existingRecord);
+                       if(existingRecord.length>0)
+                       {
+                        let dataToSave = {
+                        rating,
+                        feedback,
+                        updated_at:getDatetime(),
+                        };
+                        resonponse=await feedbackModel.update(dataToSave,`session_id='${session_id}'`);
+
+                       }else{
+                        let dataToSave = {
+                        rating,
+                        feedback,
+                        session_id,
+                        created_at:getDatetime(),
+                    };
+                            resonponse=await feedbackModel.create(dataToSave);
+                       }
+                 
+
+                 return res.status(200).json({message:"Stored",status:200,noload:true,session_id})
+          }
+          catch(error)
+          {
+              console.log(error);
+              return res.status(500).json({message:error||"something Wrong"});
+          }
+     },
+     getResult:async(req,res)=>{
+
+            try{
+                      const {session_id} =req.body;
+                let existingRecord=await questionModel.findOne({session_id});
+                //  console.log(existingRecord);
+                 return res.render(`${module_path}/result`,{
+                    session_id,
+                    existingRecord
+                 });
+
+
+            }
+            catch(err){
+                    return res.status(500).json({message:error||"something Wrong"});
+            }
+              
+                
+     }
 }
 
 

@@ -294,4 +294,59 @@ background-image: linear-gradient(90deg, #F9EDBD 0%, #F1E5C7 100%);
 </div>
 
 
+<div class="container">
+    <div class="modal fade" id="getFeedBack" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:20px 50px;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="padding:20px 50px;">
+                    <form action="/addUserEducation" id="educationForm" method="POST">
+                <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="rating" class="form-label">Rating</label>
+              <select class="form-select" id="rating" required>
+                <option value="" disabled selected>Select a rating</option>
+                <option>5 - Excellent</option>
+                <option>4 - Very Good</option>
+                <option>3 - Good</option>
+                <option>2 - Fair</option>
+                <option>1 - Poor</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="comments" class="form-label">Comments</label>
+              <textarea class="form-control" id="comments" rows="4" placeholder="Write your feedback here..." required></textarea>
+            </div>
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="my-4 col-md-4">
+                                <button type="submit" class="btn btn-success btn-block btn-submit FormSubmit"
+                                    form_id="educationForm"><span class="glyphicon glyphicon-off"></span>
+                                    Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
 

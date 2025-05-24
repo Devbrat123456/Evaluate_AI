@@ -57,7 +57,7 @@
 
  
 var calledNoOfQuestion=1;
-const limitQuestion=12;
+const limitQuestion=1;
 var base_url_for_Api;
 var api_key;
 
@@ -516,9 +516,40 @@ const evaluateAnswerApi= async(session_id)=>{
     let response = await fetch(url,parameters);
     let data = response.json();
      console.log(data);
+
+        messagePop('Your response has been saved. Wait for your Result, Till Please provide your feedback');
+     setTimeout(function () {
+  redirectWithPost('/chatbox/getFeedback', { session_id });
+}, 5000);
+
+     
      return data;       // returning promises;
 }
 
+
+function redirectWithPost(url, data) {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = url;
+
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = data[key];
+      form.appendChild(input);
+    }
+  }
+   const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "_csrf";
+      input.value =$('meta[name="csrf-token"]').attr('content');
+      form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
 const displayTheResult =(result)=>{
      console.log(result,"this is result");

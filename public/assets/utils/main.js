@@ -279,9 +279,16 @@ let getJsonFileCount=1;
 socket.on('json_file',(jsonFile)=>{
         $('#SubmitAnswerButton').addClass('displayNone');
        if(getJsonFileCount==1)
+       {
+        
         $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
+       }
     else
+    {
         $('#generateQts').html("<span id='generateQtsSpan'>Next </span>");
+        $('#generateQts').attr('title',"Click here for Next Question");
+
+    }
         playAudio(jsonFile.audioPath,jsonFile.jsonFile);
         getJsonFileCount++;
  }) 

@@ -20,7 +20,7 @@
 
           <div class="chat-input">
 
-              <button class="btn btn-sm btn-success buttonload" id="generateQts"> <i class="fa fa-spinner fa-spin"></i>Loading</button>
+              <button class="btn btn-sm btn-success buttonload" data-bs-toggle="tooltip" data-bs-placement="top" id="generateQts" title="Click here for Start"> <i class="fa fa-spinner fa-spin"></i>Loading</button>
                <textarea type="text" placeholder="Type a message" id="userAnswerInput"> </textarea>
                <label id="SubmitAnswerButton"  class="displayNone" onclick="onUserSumbmitAnswer()"> <i class="fa fa-paper-plane" aria-hidden="true"></i> </label>
               <input type="hidden" id="question_id" >
@@ -32,16 +32,12 @@
               <input type="hidden" id="user_name" value="<%-user.NAME %>">
               <input type="hidden" id="user_email" value="<%-user.EMAIL %>">
               <input type="hidden" id="session_id" value="">
-              <button class="send-button displayNone" id="startBtn" title="Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
+              <button class="send-button displayNone" id="startBtn" data-bs-toggle="tooltip" data-bs-placement="top" title="Click to Speak in Mic"><i id="mic" class="mic-icon fas fa-microphone"></i></button>
           </div>
         </div>
     </div>
   </div>
-  <div class="row">
-     <div class="col-md-12">
-      </div>I
-  </div>
-   
+  
 <script src="/assets/js/gsap.min.js"></script>
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -57,10 +53,12 @@
             let user_id ="<%-user.id %>";
             // getQuestion(skill,level_id,email,user_id);
            
-           
             fetchSubscriptionKeyAndBaseUrl();
             openModalForLogin();
+            updateTitle();
     };
+
+   
 
 </script>
 <script>
