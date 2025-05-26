@@ -447,6 +447,7 @@ io.on('connect',(socket)=>{
 let speechRecognizer;
 let pushStream;
 let recognizerRestartTimer;
+let isStreamClosed = false;
 
 function initSpeechRecognizer() {
     const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
@@ -459,6 +460,7 @@ function initSpeechRecognizer() {
     pushStream = sdk.AudioInputStream.createPushStream();   
     const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
     speechRecognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+    isStreamClosed = false;
 
 
     speechRecognizer.recognizing = (s, e) => {
@@ -523,7 +525,7 @@ function restartRecognizer() {
 
        socket.on('gettingAudio',async(buffer)=>{
 
-                if (pushStream) {
+                if (!isStreamClosed && pushStream) {
                     pushStream.write(Buffer.from(buffer)); // write all chunks
                 }
 
@@ -532,6 +534,7 @@ function restartRecognizer() {
         socket.on('endStream', () => {
             if (pushStream) {
                 pushStream.close();
+                 isStreamClosed = true;
             }
             if (speechRecognizer) {
                 speechRecognizer.stopContinuousRecognitionAsync(() => {
@@ -539,7 +542,24 @@ function restartRecognizer() {
                 });
             }
         });
+
+        socket.on('saveAudioFile',async(data)=>{
+             console.log(data);
+             saveAudioFileQuestionWise(data.buffer,data.fileName);
+        })
  })
+
+  const saveAudioFileQuestionWise =async(buffer,fileName)=>{
+
+     const filePath = path.join(__dirname, '../../public/uploads', fileName);
+        fs.writeFile(filePath, Buffer.from(buffer), (err) => {
+            if (err) {
+                console.error('Error saving file:', err);
+                return;
+            }
+            console.log('Audio file saved:', filePath);
+        });
+  }
 
 
 

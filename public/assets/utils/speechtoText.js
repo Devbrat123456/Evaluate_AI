@@ -1,3 +1,5 @@
+
+
 const micButton = document.getElementById('startBtn'); // or stopBtn initially
 let isRecognizing = false;
 var currentText='';
@@ -117,18 +119,27 @@ const takingInputFromUser = async () => {
 
 async function stopRecordingAudio() {
     if (recorder) {
-          socket.emit('endStream')
+          socket.emit('endStream');
+           console.log("emmiting end stem");
+
         recorder.stopRecording(() => {
-              if(recorder)
-              {
+             
                 
                 const audioBlob = recorder.getBlob();
-                console.log('Recording stopped, blob ready.');
+                 let question_id =  $('#question_id').val();
+                 let session_id =  $('#session_id').val();
+                  console.warn("file last audio ,");
 
+                audioBlob.arrayBuffer().then(buffer => {
+                    socket.emit('saveAudioFile', {
+                        buffer: buffer,
+                        fileName: `audio_${session_id}_${question_id}.wav`
+                    });
+                })
+        
             // Stop mic access
                 const stream = recorder.stream;
                 stream.getTracks().forEach(track => track.stop());
-              }
 
         });
         recorder = null;

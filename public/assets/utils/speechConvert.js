@@ -57,7 +57,7 @@
 
  
 var calledNoOfQuestion=1;
-const limitQuestion=1;
+const limitQuestion=13;
 var base_url_for_Api;
 var api_key;
 
@@ -508,16 +508,22 @@ const evaluateAnswerApi= async(session_id)=>{
         method:"POST",
         headers: {
         'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key':api_key
+
         },
         body:JSON.stringify({
     session_id: session_id
     })
     }
     let response = await fetch(url,parameters);
-    let data = response.json();
-     console.log(data);
 
-        messagePop('Your response has been saved. Wait for your Result, Till Please provide your feedback');
+     if(!response.ok)
+     {
+        throw new Error(response.statusText);
+     }
+    let data = response.json();
+    //  console.log(data);
+    messagePop('Your response has been saved. Wait for your Result, Till Please provide your feedback');
      setTimeout(function () {
   redirectWithPost('/chatbox/getFeedback', { session_id });
 }, 5000);

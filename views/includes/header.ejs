@@ -95,19 +95,7 @@
                                     <div class="main-menu d-none d-lg-block">
                                         <nav>
                                             <ul id="navigation">
-                                                <li class="active"><a href="/">Home</a></li>
-                                                <li><a href="/about">About</a></li>
-                                                <li><a href="#">Blog</a>
-                                                    <ul class="submenu">
-                                                        <li><a href="/blog">Blog</a></li>
-                                                        <li><a href="/blog_details">Blog Details</a></li>
-                                                        <li><a href="/elements">Element</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li><a href="/contact">Contact</a></li>
-                                                <!-- Button -->
-                                               
-                                                </li>
+                                              
                                                 <% if (user) { %>
                                                     <li class="button-header">Hi <%= user.NAME %>
                                                             <ul class="submenu">
@@ -122,7 +110,14 @@
                                                         <li class="button-header"><a href="/auth/google"
                                                                 class="btn btn3">Log
                                                                 in</a></li>
+                                                        <li class="button-header">  <a href="/Register" class="btn btn3 " data-animation="fadeInLeft"
+                                                data-delay="0.7s">Sign
+                                                Up</a></li>
                                                         <% } %>
+                                                          <li><a href="/contact">Contact</a></li>
+                                                <!-- Button -->
+                                               
+                                                </li>
 
 
                                             </ul>

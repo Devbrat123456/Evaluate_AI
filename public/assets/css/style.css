@@ -192,7 +192,9 @@ p {
 .clear {
     clear: both;
 }
-
+.support-wrapper,.topic-area{
+    background-color: #fff;
+}
 a,
 .button {
     -webkit-transition: 0.3s;
