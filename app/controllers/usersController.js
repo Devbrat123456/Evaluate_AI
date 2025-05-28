@@ -26,7 +26,7 @@ const usersController = {
 
     index: async (req, res) => {
         const allData = await UserModelInstance.findAll();
-       
+
         res.render(`${module_path}/index`, {
             page, description, allData, encryptId
         });
@@ -92,7 +92,7 @@ const usersController = {
 
 
         try {
-             console.log(dataToSave);
+            console.log(dataToSave);
             const newUser = await UserModelInstance.create(dataToSave);
             let msg = {
                 'message': "Sign Up Success Fully Now you can Login!"
@@ -107,7 +107,7 @@ const usersController = {
                 let msg = {
                     'message': 'Failed  to add Please Try Again! ' + error.sqlMessage
                 }
-                 console.log(error);
+                console.log(error);
                 return res.status(500).json(msg);
             }
             req.flash('error', 'Failed  to add Please Try Again! ' + error.sqlMessage);
@@ -177,7 +177,7 @@ const usersController = {
                 res.status(200).json({
                     success: false,
                     message: `Resource with ID ${id} not found or could not be deleted.`,
-                    error:deleteStatus
+                    error: deleteStatus
                 });
             }
         } catch (err) {
@@ -258,7 +258,7 @@ const usersController = {
 
             const newEmployementModel = await employementModel.create(dataToSave);
 
-            if (newEmployementModel.affectedRows > 0) {
+            if (newEmployementModel.rowsAffected.length > 0) {
                 let msg = {
                     'message': "SuccessFully Added",
                     'status': 200,
@@ -297,15 +297,16 @@ const usersController = {
 
             const newExperience = await experienceModel.create(dataToSave);
 
-            if (newExperience.affectedRows > 0) {
+
+            if (newExperience.rowsAffected.length > 0) {
                 let msg = {
-                    'message': "SuccessFully Added",
+                    'message': "Success",
                     'status': 200,
                 }
                 return res.status(200).json(msg);
             } else {
                 let msg = {
-                    'message': "Insertion Failed",
+                    'message': "Failed",
                     'status': 500,
                 }
                 return res.status(500).json(msg);
@@ -327,7 +328,7 @@ const usersController = {
 
             const data = await UserModelInstance.findOne({ EMAIL });
 
-            if (data.length>0) {
+            if (data.length > 0) {
 
                 const isMatch = await bcrypt.compare(password, data[0].PASSWORD);
                 if (!isMatch) {
@@ -366,7 +367,7 @@ const usersController = {
             let msg = {
                 'message': error.sqlMessage || "Something went wrong",
                 'status': 500,
-                'error':error
+                'error': error
             }
             console.log(error);
             return res.status(500).json(msg);
@@ -409,6 +410,7 @@ const usersController = {
             }
 
             const newExperience = await experienceModel.update(dataToSave, `id=${experience_id}`);
+            console.log(newExperience);
 
             if (newExperience.affectedRows > 0) {
                 let msg = {
@@ -428,6 +430,29 @@ const usersController = {
 
             let msg = {
                 'message': error.sqlMessage || "Something went wrong",
+                'status': 500,
+            }
+            return res.status(500).json(msg);
+        }
+    },
+    DeleteUserSkills: async (req, res) => {
+        try {
+            const { id } = req.body;
+            const newExperience = await experienceModel.delete({ id });
+            if (newExperience.affectedRows > 0) {
+
+                let msg = {
+                    'message': "Deleted ",
+                    'status': 200,
+                    noload: true,
+                }
+                return res.status(200).json(msg);
+            }else{
+                 return res.status(500).json({'message':"Deletion Failed"});
+            }
+        } catch (err) {
+            let msg = {
+                'message': err.sqlMessage || "Something went wrong",
                 'status': 500,
             }
             return res.status(500).json(msg);
@@ -567,39 +592,62 @@ const usersController = {
         }
 
     },
+      DeleteUserEmployment: async (req, res) => {
+        try {
+            const { id } = req.body;
+            const newExperience = await employementModel.delete({ id });
+            if (newExperience.length> 0) {
 
-    UploadProfile:async(req,res)=>{
-
-            if(!req.files){
-                return res.status(500).json({'message':"No file Found for Profile"})
+                let msg = {
+                    'message': "Deleted ",
+                    'status': 200,
+                    noload: true,
+                }
+                return res.status(200).json(msg);
+            }else{
+                 return res.status(500).json({'message':"Deletion Failed",status:500});
             }
+        } catch (err) {
+            let msg = {
+                'message': err.sqlMessage || "Something went wrong",
+                'status': 500,
+            }
+            return res.status(500).json(msg);
+        }
     },
-    UploadResume:async(req,res,err)=>{
-                if(!req.files){
-                return res.status(500).json({'message':"No file Found for Resume"});
-            }
+
+    UploadProfile: async (req, res) => {
+
+        if (!req.files) {
+            return res.status(500).json({ 'message': "No file Found for Profile" })
+        }
+    },
+    UploadResume: async (req, res, err) => {
+        if (!req.files) {
+            return res.status(500).json({ 'message': "No file Found for Resume" });
+        }
 
 
 
         try {
-              const {user_id}= req.body;
-                let filePath = req.files[0].filename;
-                console.log(filePath);
-                 res.setHeader('Content-Disposition', 'inline'); 
-            const updateStatus = await UserModelInstance.update({ RESUME: filePath ?? null}, `id=${user_id}`);
+            const { user_id } = req.body;
+            let filePath = req.files[0].filename;
+            console.log(filePath);
+            res.setHeader('Content-Disposition', 'inline');
+            const updateStatus = await UserModelInstance.update({ RESUME: filePath ?? null }, `id=${user_id}`);
             console.log(updateStatus);
             if (updateStatus) {
-                return res.status(200).json({"message":"Updated Successfully",filePath});
+                return res.status(200).json({ "message": "Updated Successfully", filePath });
             } else {
-                return res.status(500).json({"message":"Failed Updation"});
+                return res.status(500).json({ "message": "Failed Updation" });
             }
         }
         catch (error) {
-            return res.status(500).json({"message":'Failed  to add Please Try Again! ' + error.sqlMessage});
+            return res.status(500).json({ "message": 'Failed  to add Please Try Again! ' + error.sqlMessage });
         }
 
 
-    }       
+    }
 
 
 }

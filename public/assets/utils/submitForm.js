@@ -18,10 +18,9 @@ $('.FormSubmit').click(function (e) {
         success: function (response) {
         document.getElementById('main-loader').style.display = 'none';
             if (response.message) {
-                messagePop(response.message);
+                // messagePop(response.message);
                   if(response.noload)
                   {
-                    console.log('noload');
                     getResultOfSession(response.session_id);
                   }else{
                       setInterval(window.location.reload(true), 5000);
@@ -32,6 +31,7 @@ $('.FormSubmit').click(function (e) {
             }
         },
         error: function (err) {
+            document.getElementById('main-loader').style.display = 'none';
             messagePop(err.responseJSON.message, 'error');
         }
 
@@ -69,3 +69,27 @@ function redirectWithPost(url, data) {
   document.body.appendChild(form);
   form.submit();
 }
+
+
+ const deleteData = async(id,url,event)=>{
+   console.log(id,url,event);
+
+      let parameters={
+        method:"POST",
+        headers: {
+        'Content-Type': 'application/json',
+         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        body:JSON.stringify({id})
+    };
+      let response = await fetch(url,parameters);
+      let data = await response.json();
+       if(data.status==200)
+       {
+         console.log($(event).closest('tr'))
+         
+         $(event).closest('tr').remove();
+       }else{
+         messagePop(response.message);
+       }
+ }

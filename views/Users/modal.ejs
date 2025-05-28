@@ -89,7 +89,7 @@
 
                         <div class="row">
                             <input type="text" class="form-control" required id="notice_period" name="notice_period"
-                                placeholder="Enter your Notice Period in Days ">
+                                placeholder="Enter your Notice Period in Days " onkeypress="return /[0-9]/.test(event.key)">
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -233,7 +233,7 @@
                                 <th>
                                     <label for="skill_experience">
 
-                                        Experience
+                                        Experience (Yrs)
                                     </label>
                                 </th>
                             </thead>
@@ -256,7 +256,7 @@
                                         <td>
                                             <input type="tel" class="form-control" id="skill_experience"
                                                 name="experience" required
-                                                placeholder="Enter your Experience in this Skill">
+                                                placeholder="Enter your Experience in Numeric Only" onkeypress="return /[0-9]/.test(event.key)">
                                         </td>
                                     </div>
                                     <!-- <div class="col-md-3">
@@ -305,7 +305,7 @@
                                 <th>
                                     <label for="skill_experience">
 
-                                        Experience
+                                        Experience (yrs)
                                     </label>
                                 </th>
                             </thead>
@@ -328,7 +328,7 @@
                                         <td>
                                             <input type="text" class="form-control" id="edit_skill_experience"
                                                 name="experience" required
-                                                placeholder="Enter your Experience in this Skill">
+                                                placeholder="Enter your Experience in this Skill" onkeypress="return /[0-9]/.test(event.key)">
                                         </td>
                                     </div>
                                     <!-- <div class="col-md-3">
@@ -447,7 +447,7 @@
 
                         <div class="row">
                             <input type="text" class="form-control" required id="edit_notice_period"
-                                name="notice_period" placeholder="Enter your Notice Period in Days ">
+                                name="notice_period" placeholder="Enter your Notice Period in Days " onkeypress="return /[0-9]/.test(event.key)" >
                         </div>
                         <div class="row">
                             <div class="col-md-12">
