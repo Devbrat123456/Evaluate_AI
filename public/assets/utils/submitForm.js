@@ -23,7 +23,7 @@ $('.FormSubmit').click(function (e) {
                   {
                     getResultOfSession(response.session_id);
                   }else{
-                      setInterval(window.location.reload(true), 5000);
+                      setInterval(window.location.reload(true), 3000);
                   }
             }
             if (response.token){ 
@@ -86,7 +86,6 @@ function redirectWithPost(url, data) {
       let data = await response.json();
        if(data.status==200)
        {
-         console.log($(event).closest('tr'))
          
          $(event).closest('tr').remove();
        }else{

@@ -191,11 +191,17 @@
                                             class="fas fa-plus" row_id="1"></i>
                                         Education</a>
                                 </div>
-                                <% educationDetails.forEach((val)=>{
+                                <% educationDetails.forEach((val,key)=>{
 
                                     %>
-                                    <div class="container text-field">
-                                        <p>
+                                    <table class="container text-field">
+                                         <tbody>
+                                        <tr>
+                                            <td>
+                                                 <span class="bold">
+
+                                                <%- key+1 %>
+                                            </span>
                                             <span class="bold">
 
                                                 <%- val.course %>
@@ -208,9 +214,14 @@
                                                     %></span>
                                             <span>
                                                 <i class="fas fa-edit" onclick="fetchDataEducation('<%-val.id%>')"></i>
+                                                 <i class="fas fa-trash mx-4"
+                                                            onclick="deleteData('<%- val.id %>','/deleteUserEducation',this)"></i>
                                             </span>
 
-                                    </div>
+                                    </td>
+                                    </tr>
+                                    </tbody>
+                                    </table>
                                     <% }) %>
 
                             </div>

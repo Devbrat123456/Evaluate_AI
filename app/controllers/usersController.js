@@ -213,7 +213,7 @@ const usersController = {
 
             const newEducation = await educationModel.create(dataToSave);
 
-            if (newEducation.affectedRows > 0) {
+            if (newEducation.rowsAffected.length > 0) {
                 let msg = {
                     'message': "SuccessFully Added",
                     'status': 200,
@@ -230,9 +230,10 @@ const usersController = {
 
         } catch (error) {
             let msg = {
-                'message': error.sqlMessage,
+                'message': error.sqlMessage??"Something Went wrong",
                 'status': 500,
             }
+             console.log(error);
             return res.status(500).json(msg);
         }
     },
@@ -440,6 +441,29 @@ const usersController = {
             const { id } = req.body;
             const newExperience = await experienceModel.delete({ id });
             if (newExperience.affectedRows > 0) {
+
+                let msg = {
+                    'message': "Deleted ",
+                    'status': 200,
+                    noload: true,
+                }
+                return res.status(200).json(msg);
+            }else{
+                 return res.status(500).json({'message':"Deletion Failed"});
+            }
+        } catch (err) {
+            let msg = {
+                'message': err.sqlMessage || "Something went wrong",
+                'status': 500,
+            }
+            return res.status(500).json(msg);
+        }
+    },
+    DeleteUserEducation: async (req, res) => {
+        try {
+            const { id } = req.body;
+            const newExperience = await educationModel.delete({ id });
+            if (newExperience.length > 0) {
 
                 let msg = {
                     'message': "Deleted ",

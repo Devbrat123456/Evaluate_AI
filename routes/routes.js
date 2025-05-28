@@ -59,6 +59,7 @@ router.route('/').get(home);
 router.get('/register', userClass.Register);
 dynamicResource(router, 'users');
 router.post('/addUserEducation', userClass.AddEducation);
+router.post('/deleteUserEducation', userClass.DeleteUserEducation);
 router.post('/addUserEmployement', userClass.AddEmployement);
 router.post('/addUserSkills', userClass.AddUserSkills);
 router.post('/login', userClass.Login);
