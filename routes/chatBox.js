@@ -21,6 +21,7 @@ router.post('/', chatBoxController.avatar);
 router.get('/get-subscription-key', chatBoxController.subscriptionKey);
 router.post('/storeToken', chatBoxController.storeToken);
 router.get('/textToSpeech', chatBoxController.textToSpeech);
+router.post('/testingMic', chatBoxController.testingMic);
 router.post('/speechToText',upload.any('audio'),chatBoxController.speechToText);
 router.get('/getJsonFile', chatBoxController.getJsonFileFun);
 router.post('/storeAnswer', chatBoxController.storeAnswer);

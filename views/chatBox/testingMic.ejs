@@ -1,0 +1,300 @@
+<!doctype html>
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Courses | Education</title>
+    <meta name="description" content="">
+    <meta content="<%-csrfToken%>" name="csrf-token">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/assets/css/slicknav.css">
+    <link rel="stylesheet" href="/assets/css/flaticon.css">
+    <link rel="stylesheet" href="/assets/css/progressbar_barfiller.css">
+    <link rel="stylesheet" href="/assets/css/gijgo.css">
+    <link rel="stylesheet" href="/assets/css/animate.min.css">
+    <link rel="stylesheet" href="/assets/css/animated-headline.css">
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css">
+    <link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/assets/css/themify-icons.css">
+    <link rel="stylesheet" href="/assets/css/slick.css">
+    <link rel="stylesheet" href="/assets/css/nice-select.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/chatBox.css">
+    <link rel="stylesheet" href="/assets/css/loader.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 95vh;
+            font-size: 1.5rem;
+        }
+
+        .mic-bars span {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: #ccc;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: height 0.2s ease;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+            background-color: #000;
+        }
+
+        .mic-bars span.active {
+            background-color: #5a4bff;
+        }
+    </style>
+
+</head>
+
+<body class="bg-light justify-content-center align-items-center ">
+
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold">Check camera, mic, and share screen</h1>
+            <p class="text-muted">We use audio, video, and screen sharing to generate an accurate assessment &
+                proctoring score. Please note that the recording of your screen will be included in the AI interview
+                report.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Camera Section -->
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Camera</label>
+                <select id="cameraSelect" class="form-select mb-2"></select>
+                <video id="cameraPreview" autoplay playsinline></video>
+            </div>
+
+            <!-- Mic Section -->
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Microphone</label>
+                <select id="micSelect" class="form-select mb-2"></select>
+
+                <p class="mt-3">Speak and pause to check your microphone, you will hear your voice
+                    <strong>(mandatory)</strong>.
+                </p>
+
+                <div class="mic-bars mb-3" id="micLevel">
+                    <!-- 20 bars -->
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="final">
+                        <button class="btn btn-primary" id="testMic">Speak</button>
+                        <button id="stopBtn" class="btn btn-primary" style="opacity: 0;">Pause</button>
+                    </div>
+                    <div id="pausebutton">
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <!-- Terms -->
+     
+        <div class="form-check mt-5 text-center">
+            <form method="POST" action="/chatbox" id="chatBoxForm" >
+                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                <input type="hidden" name="session_id" value="<%=session_id%>">
+                <input type="hidden" name="user_id" value="<%=user_id%>">
+                <input type="hidden" name="isMikeOkay"  id="isMikeOkay" >
+                <button class="btn btn-primary" type="submit" id="">Share Screen & Start the Interview</button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Populate camera and mic dropdowns
+
+        let recorder;
+        let audioChunks = [];
+        let animationId;
+        async function getDevices() {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const cams = devices.filter(d => d.kind === 'videoinput');
+            const mics = devices.filter(d => d.kind === 'audioinput');
+
+            const cameraSelect = document.getElementById('cameraSelect');
+            const micSelect = document.getElementById('micSelect');
+
+            cams.forEach(cam => {
+                const option = document.createElement('option');
+                option.value = cam.deviceId;
+                option.text = cam.label || `Camera ${cameraSelect.length + 1}`;
+                cameraSelect.appendChild(option);
+            });
+
+            mics.forEach(mic => {
+                const option = document.createElement('option');
+                option.value = mic.deviceId;
+                option.text = mic.label || `Mic ${micSelect.length + 1}`;
+                micSelect.appendChild(option);
+            });
+        }
+
+        async function showDefaultCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const videoElement = document.getElementById('cameraPreview');
+                videoElement.srcObject = stream;
+                await videoElement.play();
+            } catch (err) {
+                console.error("Camera access denied or failed:", err);
+            }
+        }
+        // Camera preview
+        document.getElementById('cameraSelect').addEventListener('change', async function () {
+            const deviceId = this.value;
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } });
+            document.getElementById('cameraPreview').srcObject = stream;
+            try {
+                await videoElement.play(); // ✅ Explicitly play the video
+            } catch (err) {
+                console.error('Video play failed:', err);
+            }
+        });
+
+        // Mic test logic
+        document.getElementById('testMic').addEventListener('click', async () => {
+            const micLevel = document.getElementById('micLevel').children;
+            const micId = document.getElementById('micSelect').value;
+
+            const stopBtn = document.getElementById('stopBtn');
+            const startBtn = document.getElementById('testMic');
+
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: micId ? { exact: micId } : undefined } });
+
+            const context = new AudioContext();
+            const source = context.createMediaStreamSource(stream);
+            const analyser = context.createAnalyser();
+            analyser.fftSize = 32;
+
+            source.connect(analyser);
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            function animate() {
+                analyser.getByteFrequencyData(dataArray);
+                const average = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+                const level = Math.min(20, Math.floor(average / 10));
+
+                for (let i = 0; i < micLevel.length; i++) {
+                    micLevel[i].classList.toggle('active', i < level);
+                }
+
+                animationId = requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            recorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            recorder.ondataavailable = e => {
+                audioChunks.push(e.data);
+            };
+
+            recorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const audio = new Audio(audioUrl);
+                audio.controls = true;
+                audio.autoplay = true;
+
+                const pauseButton = document.getElementById('pausebutton');
+                pauseButton.innerHTML = ''; // ✅ Clear previous audio if any
+                pauseButton.appendChild(audio);
+                stopBtn.style.opacity = 0;
+                startBtn.style.opacity =1;
+                document.getElementById('isMikeOkay').value=1;
+            };
+
+            recorder.start();
+
+            startBtn.style.opacity = 0;
+            stopBtn.style.opacity = 1;
+
+
+            // setTimeout(() => {
+            //     recorder.stop();
+            //     cancelAnimationFrame(animationId); // 🔴 Stop animation loop
+            //     context.close();
+            // }, 4000);
+
+
+        });
+
+        document.getElementById('stopBtn').addEventListener('click', async () => {
+                  recorder.stop();
+                cancelAnimationFrame(animationId); // 🔴 Stop animation loop
+        })
+
+        async function requestPermissions() {
+            try {
+                // Request both audio and video
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+                // ✅ Set camera preview
+                const videoElement = document.getElementById('cameraPreview');
+                videoElement.srcObject = stream;
+                await videoElement.play();
+
+                // ✅ Continue app logic after permission is granted
+                getDevices(); // Load devices into dropdowns or continue setup
+
+            } catch (err) {
+                // 🔴 Handle denied permission
+                alert("Camera and microphone access is required to continue. Please allow access.");
+
+                // Optionally disable further interactions
+                document.getElementById('testMic').disabled = true;
+                document.getElementById('micSelect').disabled = true;
+                document.getElementById('cameraSelect').disabled = true;
+            }
+        }
+        window.onload = () => {
+            requestPermissions();
+        };
+
+
+document.getElementById("chatBoxForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // ❌ Prevents form from submitting
+
+     const checkbox = document.getElementById('isMikeOkay');
+
+  if (checkbox.value!='') {
+
+             
+        
+document.getElementById("chatBoxForm").submit();
+  } else {
+     alert("Please test your mic And Camera ");
+  }
+    
+    // You can now handle data using JS or AJAX
+  });
+
+    </script>
+
+</body>
+
+</html>
