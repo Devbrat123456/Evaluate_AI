@@ -290,7 +290,16 @@ socket.on('json_file',(jsonFile)=>{
 
     }
         playAudio(jsonFile.audioPath,jsonFile.jsonFile);
-        getJsonFileCount++;
+         if(getJsonFileCount>1)
+         {
+             setTimeout(()=>{
+$('#generateQtsSpan').trigger('click');
+     
+             },100);
+        }
+       getJsonFileCount++;
+
+
  }) 
 socket.on('audioPath',(audioPath)=>{
      //  first i have got updated audio now i will get audio json file 

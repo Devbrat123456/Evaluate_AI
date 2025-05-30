@@ -102,7 +102,7 @@ const takingInputFromUser = async () => {
             recorderType: StereoAudioRecorder,
             desiredSampRate: 16000,
             numberOfAudioChannels: 1,
-            timeSlice: 250,
+            timeSlice: 500,
             ondataavailable: function(blob) {
                 blob.arrayBuffer().then(buffer => {
                     socket.emit('gettingAudio', buffer);
@@ -121,6 +121,10 @@ async function stopRecordingAudio() {
     if (recorder) {
           socket.emit('endStream');
            console.log("emmiting end stem");
+           setTimeout(()=>{
+               $('#SubmitAnswerButton').trigger('click')
+
+           },100);
 
         recorder.stopRecording(() => {
              
@@ -128,7 +132,7 @@ async function stopRecordingAudio() {
                 const audioBlob = recorder.getBlob();
                  let question_id =  $('#question_id').val();
                  let session_id =  $('#session_id').val();
-                  console.warn("file last audio ,");
+                console.warn("file last audio ,");
 
                 audioBlob.arrayBuffer().then(buffer => {
                     socket.emit('saveAudioFile', {
