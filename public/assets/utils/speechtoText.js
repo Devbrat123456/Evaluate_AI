@@ -47,41 +47,42 @@ socket.on('sttfinal',(text)=>{
         currentText+=" "+text;
      $('#userAnswerInput').val(currentText);
 })
-const speechToText = async (pathforAudioFile) => {
 
-    const response = await fetch(pathforAudioFile);
-    const audioBlob = await response.blob();
-    const audioFile = new File([audioBlob], "audio.wav", {
-        type: "audio/wav"
-    });
+// const speechToText = async (pathforAudioFile) => {
 
-    const formData = new FormData();
-    formData.append("audio", audioFile);
-    formData.append("mukul", "good");
+//     const response = await fetch(pathforAudioFile);
+//     const audioBlob = await response.blob();
+//     const audioFile = new File([audioBlob], "audio.wav", {
+//         type: "audio/wav"
+//     });
 
-    try {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/ChatBox/speechToText',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                const audio = new Audio(data.audioPath);
-                audio.play();
+//     const formData = new FormData();
+//     formData.append("audio", audioFile);
+//     formData.append("mukul", "good");
 
-            }
-        });
+//     try {
+//         $.ajaxSetup({
+//             headers: {
+//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             }
+//         });
+//         $.ajax({
+//             url: '/ChatBox/speechToText',
+//             type: 'POST',
+//             data: formData,
+//             processData: false,
+//             contentType: false,
+//             success: function(data) {
+//                 const audio = new Audio(data.audioPath);
+//                 audio.play();
 
-    } catch (error) {
-        messagePop(error.message, 'error');
-    }
-}
+//             }
+//         });
+
+//     } catch (error) {
+//         messagePop(error.message, 'error');
+//     }
+// }
 var mediaRecorder;
 let recorder=null;
 const takingInputFromUser = async () => {
@@ -102,7 +103,7 @@ const takingInputFromUser = async () => {
             recorderType: StereoAudioRecorder,
             desiredSampRate: 16000,
             numberOfAudioChannels: 1,
-            timeSlice: 500,
+            timeSlice: 250,
             ondataavailable: function(blob) {
                 blob.arrayBuffer().then(buffer => {
                     socket.emit('gettingAudio', buffer);
@@ -123,8 +124,7 @@ async function stopRecordingAudio() {
            console.log("emmiting end stem");
            setTimeout(()=>{
                $('#SubmitAnswerButton').trigger('click')
-
-           },100);
+           },10);
 
         recorder.stopRecording(() => {
              

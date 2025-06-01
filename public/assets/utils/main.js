@@ -280,12 +280,13 @@ socket.on('json_file',(jsonFile)=>{
         $('#SubmitAnswerButton').addClass('displayNone');
        if(getJsonFileCount==1)
        {
-        
         $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
        }
     else
     {
-        $('#generateQts').html("<span id='generateQtsSpan'>Next </span>");
+        // $('#generateQts').html("<span id='generateQtsSpan'>Next </span>");
+        $('#generateQts').addClass('displayNone');
+
         $('#generateQts').attr('title',"Click here for Next Question");
 
     }
@@ -293,9 +294,8 @@ socket.on('json_file',(jsonFile)=>{
          if(getJsonFileCount>1)
          {
              setTimeout(()=>{
-$('#generateQtsSpan').trigger('click');
-     
-             },100);
+                $('#generateQtsSpan').trigger('click');
+             },10);
         }
        getJsonFileCount++;
 

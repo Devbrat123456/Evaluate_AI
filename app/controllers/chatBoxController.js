@@ -557,20 +557,30 @@ io.on('connect', (socket) => {
     });
 
     socket.on('saveAudioFile', async (data) => {
-        console.log(data);
-        saveAudioFileQuestionWise(data.buffer, data.fileName);
+
+        saveAudioFileQuestionWise(data.buffer, data.fileName,socket);
     })
 })
 
-const saveAudioFileQuestionWise = async (buffer, fileName) => {
+const saveAudioFileQuestionWise = async (buffer, fileName,socket) => {
 
-    const filePath = path.join(__dirname, '../../public/uploads', fileName);
-    fs.writeFile(filePath, Buffer.from(buffer), (err) => {
-        if (err) {
-            console.error('Error saving file:', err);
-            return;
+    const speechConfig = sdk.SpeechConfig.fromSubscription(process.env.SPEECH_KEY, process.env.SPEECH_REGION);
+    speechConfig.speechRecognitionLanguage = "en-US";
+
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(Buffer.from(buffer));
+
+    const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
+
+    recognizer.recognizeOnceAsync(result => {
+        if (result.reason === sdk.ResultReason.RecognizedSpeech) {
+            console.log("Recognized text:", result.text);
+            socket.emit("sttfinal", result.text); // emit back to client
+            console.log("emmited test from backd:", result.text);
+        } else {
+            console.error("Speech recognition failed:", result);
         }
-        console.log('Audio file saved:', filePath);
+
+        recognizer.close();
     });
 }
 
