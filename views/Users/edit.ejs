@@ -457,6 +457,8 @@
 
 
             const proceedForInterview = () => {
+
+
                 let user_id = $('#interview_user_id').val();
                 let fullName = $('#fullName').val();
                 let interview_experience = $('#interview_experience').val();
@@ -503,6 +505,7 @@
 
             const getSessionId = async (name, job_role, experience, resume_file) => {
                 try {
+                    $('#main-loader').show();
                     const formData = new FormData();
                     formData.append('name', name);
                     let checkResume = "<%-data.RESUME%>";
@@ -527,6 +530,7 @@
                     }
                     let response = await fetch(url, parameters);
                     data = await response.json();
+                    $('#main-loader').hide();
                     if (data.session_id) {
                         sessionStorage.setItem('session_id', data.session_id);
 
