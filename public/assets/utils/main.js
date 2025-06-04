@@ -13,8 +13,8 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.117.1/exampl
 
 const scene = new THREE.Scene();
 const clock = new THREE.Clock();
-const height=window.innerHeight/2;
-const width=window.innerWidth /3;
+const height = window.innerHeight / 2;
+const width = window.innerWidth / 3;
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
@@ -46,7 +46,7 @@ let skinnedMeshes = [],
 const loader = new GLTFLoader();
 loader.load(
     '/model/NewLadyAvatar.glb',
-    function(gltf) {
+    function (gltf) {
         model = gltf.scene;
 
         animationsArr = gltf.animations;
@@ -91,7 +91,7 @@ loader.load(
 
     },
     undefined,
-    function(error) {
+    function (error) {
         console.error('An error occurred:', error);
     }
 );
@@ -184,11 +184,11 @@ function animateLipSync(phoneme, intensity) {
         if (morphTargetDictionary && morphTargetDictionary[phonemeToMorphTarget[phoneme]]) {
             const index = morphTargetDictionary[phonemeToMorphTarget[phoneme]];
 
-                gsap.to(mesh.morphTargetInfluences, {
-                    [index]: intensity, // Target the specific index
-                    duration: 0.2, // Adjust duration as needed
-                    ease: "power2.out" // Smooth animation
-                }); 
+            gsap.to(mesh.morphTargetInfluences, {
+                [index]: intensity, // Target the specific index
+                duration: 0.2, // Adjust duration as needed
+                ease: "power2.out" // Smooth animation
+            });
         }
     });
 }
@@ -205,9 +205,11 @@ function animateBlinkSmooth(leftEye, rightEye, duration = 0.2) {
             if (leftIndex !== undefined && rightIndex !== undefined) {
 
                 gsap.to(mesh.morphTargetInfluences, {
-                    [leftIndex]: 1, [rightIndex]: 1, duration: duration });
+                    [leftIndex]: 1, [rightIndex]: 1, duration: duration
+                });
                 gsap.to(mesh.morphTargetInfluences, {
-                    [leftIndex]: 0, [rightIndex]: 0, duration: duration, delay: duration });
+                    [leftIndex]: 0, [rightIndex]: 0, duration: duration, delay: duration
+                });
             }
         }
     });
@@ -223,9 +225,11 @@ function lookLeftReft(leftEye, duration = 0.2) {
             if (leftIndex !== undefined) {
 
                 gsap.to(mesh.morphTargetInfluences, {
-                    [leftIndex]: 1, duration: duration });
+                    [leftIndex]: 1, duration: duration
+                });
                 gsap.to(mesh.morphTargetInfluences, {
-                    [leftIndex]: 0, duration: duration, delay: duration });
+                    [leftIndex]: 0, duration: duration, delay: duration
+                });
             }
         }
     });
@@ -248,9 +252,9 @@ function addDimple(viseme) {
 
 
 function animateLipSyncSequence(sequence) {
-   if (sequence) {
+    if (sequence) {
         let previousTiming = null;
-        
+
         sequence.forEach((timing, i) => {
             setTimeout(() => {
                 let duration = (timing.end - timing.start);
@@ -260,7 +264,7 @@ function animateLipSyncSequence(sequence) {
                 if (previousTiming) {
                     animateLipSync(previousTiming.value, 0.0, transitionDuration);
                 }
-                
+
                 animateLipSync(timing.value, 1.0, duration);
                 previousTiming = timing;
             }, timing.start);
@@ -272,66 +276,81 @@ function animateLipSyncSequence(sequence) {
 //  FIRST CONVERT TEXT TO AUDIO 
 function getAudioFile(speakingText) {
     console.log("emmiting text file ");// so that the audio file and json file get generated , o
-    socket.emit('text_file',speakingText); 
+    socket.emit('text_file', speakingText);
 
 }
-let getJsonFileCount=1;
-socket.on('json_file',(jsonFile)=>{
-        $('#SubmitAnswerButton').addClass('displayNone');
-       if(getJsonFileCount==1)
-       {
+let getJsonFileCount = 1;
+socket.on('json_file', (jsonFile) => {
+    $('#SubmitAnswerButton').addClass('displayNone');
+    if (getJsonFileCount == 1) {
         $('#generateQts').html("<span id='generateQtsSpan'>Start </span>");
-       }
-    else
-    {
+    }
+    else {
         // $('#generateQts').html("<span id='generateQtsSpan'>Next </span>");
-        $('#generateQts').addClass('displayNone');
+        $('#generateQts').html('<span id="generateQtsSpan"><i class="fa fa-spinner fa-spin"></i> </span>');
 
         $('#generateQts').attr('title',"Click here for Next Question");
 
     }
-        playAudio(jsonFile.audioPath,jsonFile.jsonFile);
-         if(getJsonFileCount>1)
-         {
-             setTimeout(()=>{
-                $('#generateQtsSpan').trigger('click');
-             },10);
-        }
-       getJsonFileCount++;
+    playAudio(jsonFile.audioPath, jsonFile.jsonFile);
+    if (getJsonFileCount > 1) {
+        setTimeout(() => {
+            $('#generateQtsSpan').trigger('click');
+        }, 4);
+    }
+    getJsonFileCount++;
 
 
- }) 
-socket.on('audioPath',(audioPath)=>{
-     //  first i have got updated audio now i will get audio json file 
-         socket.emit('get_json_file',audioPath);
- }) 
+})
+socket.on('audioPath', (audioPath) => {
+    //  first i have got updated audio now i will get audio json file 
+    socket.emit('get_json_file', audioPath);
+})
 
- 
+
 window.getAudioFile = getAudioFile;
 
-let  i=1;
+let i = 1;
+let isAudioPlaying=false;
 
-const playAudio =(audioFilePath,audioJsonFile)=>{
-        const audio = document.getElementById("audioPlay");
-        audio.src = audioFilePath.audipath;
+const playAudio = (audioFilePath, audioJsonFile) => {
+    const audio = document.getElementById("audioPlay");
+    audio.src = audioFilePath.audipath;
 
+    $('#generateQtsSpan').off('click').on('click', () => {
 
-         $('#generateQtsSpan').off('click').on('click', () => {
-              audio.play()
+        if (isAudioPlaying) return; // prevent multiple triggers
+
+        isAudioPlaying = true; // lock
+        $('#generateQtsSpan').addClass('disabled').css({ pointerEvents: 'none', opacity: 0.5 });
+        try {
+            audio.play()
                 .then(() => {
-                     console.log("calling "+i+"time");
-                     
-                     $('#startBtn').removeClass('displayNone');
-                      $('#generateQts').html('<i class="fa fa-spinner fa-spin"></i>');
-                     
-                     i++;
+                    console.log("calling " + i + "time");
+
+                    $('#startBtn').removeClass('displayNone');
+                    $('#generateQts').html('<i class="fa fa-spinner fa-spin"></i>');
+
+                    i++;
                     appendingTexttoChatMessages(audioFilePath.speakingText);
-                    animateLipSyncSequence(audioJsonFile); 
+                    animateLipSyncSequence(audioJsonFile);
                 })
                 .catch(error => {
                     console.error("Playback failed:", error);
-                });;
-        })
+                });
+
+            audio.onended = () => {
+                $('#generateQtsSpan').removeClass('disabled').css({ pointerEvents: 'auto', opacity: 1 });
+                isAudioPlaying = false; // unlock
+            };
+        } catch (err) {
+            console.error("Playback failed:", error);
+            $('#generateQtsSpan').removeClass('disabled').css({ pointerEvents: 'auto', opacity: 1 });
+            isAudioPlaying = false;
+
+        }
+
+    })
 }
 
 
@@ -386,12 +405,12 @@ function animate() {
         renderer.render(scene, camera);
 }
 
-let questionNo=1;
+let questionNo = 1;
 const appendingTexttoChatMessages = (speakingText) => {
     let date = new Date();
     let words = speakingText.split(' ');
-  
-                    $('.chat-messages').append(`
+
+    $('.chat-messages').append(`
                      <div class="message received" id="received${questionNo}">
                           <div class="message-content">
                                     <input type="hidden" name="question[]" value="${speakingText}">
@@ -400,18 +419,18 @@ const appendingTexttoChatMessages = (speakingText) => {
                         </div>
                     </div>
                     `);
-    appendtText(words,questionNo); // as function have block scope so , it will hold updated value of questionNo, for each call  not the last one , 
-     questionNo++;
+    appendtText(words, questionNo); // as function have block scope so , it will hold updated value of questionNo, for each call  not the last one , 
+    questionNo++;
 };
 
-const appendtText=(words,questionNo)=>{
-    console.log("question is"+questionNo)
-    let text ='';
-    words.forEach((val, index) => {  
+const appendtText = (words, questionNo) => {
+    console.log("question is" + questionNo)
+    let text = '';
+    words.forEach((val, index) => {
         setTimeout(() => {
-            text+=val+' ';
-            $('#text'+questionNo).text(text);
-        }, index * 400); 
+            text += val + ' ';
+            $('#text' + questionNo).text(text);
+        }, index * 400);
     });
 }
 

@@ -60,6 +60,8 @@ var calledNoOfQuestion=1;
 const limitQuestion=13;
 var base_url_for_Api;
 var api_key;
+var isAnswerSubmitted=false
+window.isAnswerSubmitted=isAnswerSubmitted;
 
 
  const fetchSubscriptionKeyAndBaseUrl=async(req,res)=>{
@@ -89,6 +91,7 @@ var api_key;
         // console.log("what you are submiting ",transcript,question_id);
          if(transcript && transcript!=' ' && question_id)
          {
+              
                 onUserSumbmitAnswerFutherAction(transcript,question_id);
          }else{
             messagePop("No answer Found Please Provide Answer",'error');
@@ -146,6 +149,7 @@ const processAfterEndingRecognitsation=()=>{
 
 const submitResponse=async(sessionId,question_id,answer)=>{
       isRecognizing=false;
+      isAnswerSubmitted=true;
     let url=`${base_url_for_Api}answer`;
     let parameters={
         method:"POST",
@@ -254,6 +258,7 @@ const getQuestion= async(topic,difficulty,emailid,user_id)=>{
 }
 
 const getQuestionNew= async(session_id)=>{
+    isAnswerSubmitted=false;
     let url=`${base_url_for_Api}next-question`;
 
     let parameters={
@@ -503,7 +508,6 @@ const evaluateAnswerApi= async(session_id)=>{
   // let url=`https://evalaiaiques-h3emesa6dngufsbt.northeurope-01.azurewebsites.net/evaluate-session`;
 
     let url=`${base_url_for_Api}evaluate-session`;
-
     let parameters={
         method:"POST",
         headers: {
@@ -527,7 +531,6 @@ const evaluateAnswerApi= async(session_id)=>{
      setTimeout(function () {
   redirectWithPost('/chatbox/getFeedback', { session_id });
 }, 5000);
-
      
      return data;       // returning promises;
 }

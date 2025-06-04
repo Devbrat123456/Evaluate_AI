@@ -464,7 +464,7 @@ io.on('connect', (socket) => {
         speechConfig.speechRecognitionLanguage = "en-US";
         speechConfig.setProperty(
             sdk.PropertyId.Speech_SegmentationSilenceTimeoutMs,
-            "2000" // milliseconds — increase this to tolerate longer pauses (5 seconds here)
+            "3000" // milliseconds — increase this to tolerate longer pauses (5 seconds here)
         );
 
         pushStream = sdk.AudioInputStream.createPushStream();
@@ -496,7 +496,8 @@ io.on('connect', (socket) => {
         };
 
         speechRecognizer.canceled = (s, e) => {
-            console.log("CANCELED:", e.reason);
+
+              console.log("CANCELED:", e.reason, e.errorDetails || '');
             
             if (e.reason === sdk.CancellationReason.Error) {
                 console.log("Error:", e.errorDetails);
@@ -543,17 +544,32 @@ io.on('connect', (socket) => {
     })
 
     socket.on('endStream', () => {
+     console.log("Received endStream");
+
+    if (speechRecognizer) {
+        // Stop recognition FIRST before closing the push stream
+        speechRecognizer.stopContinuousRecognitionAsync(() => {
+            console.log("Recognition stopped.");
+            
+            // Then close the push stream AFTER recognition stops
+            if (pushStream) {
+                pushStream.close();
+                pushStream = null;
+                isStreamClosed = true;
+            }
+
+            // speechRecognizer = null;
+        }, (err) => {
+            console.error("Error while stopping recognition:", err);
+        });
+    } else {
+        // In case recognizer is already null, still safely close push stream
         if (pushStream) {
             pushStream.close();
-             pushStream = null;
+            pushStream = null;
             isStreamClosed = true;
         }
-        if (speechRecognizer) {
-            speechRecognizer.stopContinuousRecognitionAsync(() => {
-                console.log("Recognition stopped.");
-                 speechRecognizer = null;
-            });
-        }
+    }
     });
 
     socket.on('saveAudioFile', async (data) => {
